@@ -137,9 +137,6 @@ escudo_de_vibranium = Objeto (0,0) "Escudo de Vibranium"
 escudo_del_CapitanPepe = Tomado escudo_de_vibranium pepe
 
 {-
-nombre_objeto :: ?
-nombre_objeto = ?
-
 {-Ejercicio 3-}
 
 objetos_en :: ?
