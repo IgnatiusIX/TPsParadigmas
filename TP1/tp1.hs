@@ -29,10 +29,10 @@ siguiente_posición p Oeste = (fst p - 1, snd p)
 
 posición :: Either Personaje Objeto -> Posición
 posición (Left p) = posición_personaje p
---posición (Right o) = posición_objeto o
+posición (Right o) = posición_objeto o
 
---posición_objeto :: Objeto -> Posición
---posición_objeto = foldObjeto const (const posición_personaje) id
+posición_objeto :: Objeto -> Posición
+posición_objeto = foldObjeto const (const posición_personaje) id
 
 nombre :: Either Personaje Objeto -> String
 nombre (Left p) = nombre_personaje p
@@ -44,8 +44,8 @@ nombre_personaje = foldPersonaje (const id) const id
 está_vivo :: Personaje -> Bool
 está_vivo = foldPersonaje (const (const True)) (const (const True)) (const False)
 
---fue_destruido :: Objeto -> Bool
---fue_destruido = foldObjeto (const (const False)) const (const True)
+fue_destruido :: Objeto -> Bool
+fue_destruido = foldObjeto (const (const False)) const (const True)
 
 universo_con :: [Personaje] -> [Objeto] -> [Either Personaje Objeto]
 universo_con ps os = map Left ps ++ map Right os
@@ -113,11 +113,11 @@ foldPersonaje fPersonaje fMueve fMuere p = case p of
   Mueve per dir -> fMueve  (foldPersonaje fPersonaje fMueve fMuere per) dir
   Muere per -> fMuere (foldPersonaje fPersonaje fMueve fMuere per)
 
-foldObjeto :: (Posición -> String -> a) -> (Objeto -> Personaje -> a -> a) -> (Objeto -> a -> a) -> Objeto  -> a
+foldObjeto :: (Posición -> String -> a) -> (a -> Personaje -> a) -> (a -> a) -> Objeto  -> a
 foldObjeto fObjeto fTomado fEsDestruido obj = case obj of
   Objeto pos name -> fObjeto pos name
-  Tomado obj per -> fTomado obj per (foldObjeto fObjeto fTomado fEsDestruido obj)
-  EsDestruido obj -> fEsDestruido obj (foldObjeto fObjeto fTomado fEsDestruido obj)
+  Tomado obj per -> fTomado (foldObjeto fObjeto fTomado fEsDestruido obj) per
+  EsDestruido obj -> fEsDestruido (foldObjeto fObjeto fTomado fEsDestruido obj)
 
 
 {-Ejercicio 2-}
