@@ -26,7 +26,7 @@ siguiente_posición p Norte = (fst p, snd p + 1)
 siguiente_posición p Sur = (fst p, snd p - 1)
 siguiente_posición p Este = (fst p + 1, snd p)
 siguiente_posición p Oeste = (fst p - 1, snd p)
-
+{-
 posición :: Either Personaje Objeto -> Posición
 posición (Left p) = posición_personaje p
 posición (Right o) = posición_objeto o
@@ -37,10 +37,10 @@ posición_objeto = foldObjeto const (const posición_personaje) id
 nombre :: Either Personaje Objeto -> String
 nombre (Left p) = nombre_personaje p
 nombre (Right o) = nombre_objeto o
-
+-}
 nombre_personaje :: Personaje -> String
 nombre_personaje = foldPersonaje (const id) const id
-
+{-
 está_vivo :: Personaje -> Bool
 está_vivo = foldPersonaje (const (const True)) (const (const True)) (const False)
 
@@ -102,21 +102,39 @@ objeto_de_nombre :: String -> Universo -> Objeto
 objeto_de_nombre n u = foldr1 (\x1 x2 -> if nombre_objeto x1 == n then x1 else x2) (objetos_en u)
 
 es_una_gema :: Objeto -> Bool
-es_una_gema o = isPrefixOf "Gema de" (nombre_objeto o)
+es_una_gema o = isPrefixOf "Gema de" (nombre_objeto o) -}
 
 {-Ejercicio 1-}
 
-foldPersonaje :: ?
-foldPersonaje = ?
+foldPersonaje :: (Posición -> String -> a) -> ( a -> Dirección -> a) -> (a -> a) -> Personaje -> a 
+foldPersonaje fPersonaje fMueve fMuere p = case p of
+  Personaje pos name -> fPersonaje pos name
+  Mueve per dir -> fMueve  (foldPersonaje fPersonaje fMueve fMuere per) dir
+  Muere per -> fMuere (foldPersonaje fPersonaje fMueve fMuere per)
 
-foldObjeto :: ?
-foldObjeto = ?
+foldObjeto :: (Posición -> String -> a) -> (Objeto -> Personaje -> a -> a) -> (Objeto -> a -> a) -> Objeto  -> a
+foldObjeto fObjeto fTomado fEsDestruido obj = case obj of
+  Objeto pos name -> fObjeto pos name
+  Tomado obj per -> fTomado obj per (foldObjeto fObjeto fTomado fEsDestruido obj)
+  EsDestruido obj -> fEsDestruido obj (foldObjeto fObjeto fTomado fEsDestruido obj)
+
 
 {-Ejercicio 2-}
 
-posición_personaje :: ?
-posición_personaje = ?
+pos_inicial :: Posición -> String -> Posición
+pos_inicial pos _ = pos 
 
+mueve acc dir = siguiente_posición acc dir
+
+posición_personaje :: Personaje -> Posición
+posición_personaje = foldPersonaje pos_inicial mueve id
+
+pepe = Personaje (0,0) "Pepe"
+pepe1 = Mueve pepe Norte
+pepeDead = Muere pepe1
+pepeDeadMovido = Mueve pepeDead Sur
+
+{-
 nombre_objeto :: ?
 nombre_objeto = ?
 
@@ -205,3 +223,4 @@ testsEj7 = test [ -- Casos de test para el ejercicio 7
   podemos_ganarle_a_thanos universo_sin_thanos         -- Caso de test 1 - expresión a testear
     ~=? False                                          -- Caso de test 1 - resultado esperado
   ]
+  -}
