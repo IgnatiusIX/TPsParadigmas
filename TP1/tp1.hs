@@ -26,26 +26,26 @@ siguiente_posición p Norte = (fst p, snd p + 1)
 siguiente_posición p Sur = (fst p, snd p - 1)
 siguiente_posición p Este = (fst p + 1, snd p)
 siguiente_posición p Oeste = (fst p - 1, snd p)
-{-
+
 posición :: Either Personaje Objeto -> Posición
 posición (Left p) = posición_personaje p
-posición (Right o) = posición_objeto o
+--posición (Right o) = posición_objeto o
 
-posición_objeto :: Objeto -> Posición
-posición_objeto = foldObjeto const (const posición_personaje) id
+--posición_objeto :: Objeto -> Posición
+--posición_objeto = foldObjeto const (const posición_personaje) id
 
 nombre :: Either Personaje Objeto -> String
 nombre (Left p) = nombre_personaje p
-nombre (Right o) = nombre_objeto o
--}
+--nombre (Right o) = nombre_objeto o
+
 nombre_personaje :: Personaje -> String
 nombre_personaje = foldPersonaje (const id) const id
-{-
+
 está_vivo :: Personaje -> Bool
 está_vivo = foldPersonaje (const (const True)) (const (const True)) (const False)
 
-fue_destruido :: Objeto -> Bool
-fue_destruido = foldObjeto (const (const False)) const (const True)
+--fue_destruido :: Objeto -> Bool
+--fue_destruido = foldObjeto (const (const False)) const (const True)
 
 universo_con :: [Personaje] -> [Objeto] -> [Either Personaje Objeto]
 universo_con ps os = map Left ps ++ map Right os
@@ -65,16 +65,17 @@ personaje_de (Left p) = p
 -- Asume que es un objeto
 objeto_de :: Either Personaje Objeto -> Objeto
 objeto_de (Right o) = o
-
+{-
 en_posesión_de :: String -> Objeto -> Bool
 en_posesión_de n = foldObjeto (const (const False)) (\ r p -> nombre_personaje p == n) (const False)
 
 objeto_libre :: Objeto -> Bool
 objeto_libre = foldObjeto (const (const True)) (const (const False)) (const False)
+-}
 
 norma2 :: (Float, Float) -> (Float, Float) -> Float
 norma2 p1 p2 = sqrt ((fst p1 - fst p2) ^ 2 + (snd p1 - snd p2) ^ 2)
-
+{-
 cantidad_de_objetos :: Universo -> Int
 cantidad_de_objetos = length . objetos_en
 
