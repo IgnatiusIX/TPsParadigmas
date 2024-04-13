@@ -36,7 +36,7 @@ posición_objeto = foldObjeto const (const posición_personaje) id
 
 nombre :: Either Personaje Objeto -> String
 nombre (Left p) = nombre_personaje p
---nombre (Right o) = nombre_objeto o
+nombre (Right o) = nombre_objeto o
 
 nombre_personaje :: Personaje -> String
 nombre_personaje = foldPersonaje (const id) const id
@@ -65,13 +65,13 @@ personaje_de (Left p) = p
 -- Asume que es un objeto
 objeto_de :: Either Personaje Objeto -> Objeto
 objeto_de (Right o) = o
-{-
+
 en_posesión_de :: String -> Objeto -> Bool
 en_posesión_de n = foldObjeto (const (const False)) (\ r p -> nombre_personaje p == n) (const False)
 
 objeto_libre :: Objeto -> Bool
 objeto_libre = foldObjeto (const (const True)) (const (const False)) (const False)
--}
+
 
 norma2 :: (Float, Float) -> (Float, Float) -> Float
 norma2 p1 p2 = sqrt ((fst p1 - fst p2) ^ 2 + (snd p1 - snd p2) ^ 2)
@@ -122,18 +122,19 @@ foldObjeto fObjeto fTomado fEsDestruido obj = case obj of
 
 {-Ejercicio 2-}
 
-pos_inicial :: Posición -> String -> Posición
-pos_inicial pos _ = pos 
-
-mueve acc dir = siguiente_posición acc dir
-
 posición_personaje :: Personaje -> Posición
-posición_personaje = foldPersonaje pos_inicial mueve id
+posición_personaje = foldPersonaje (\ pos _ -> pos) siguiente_posición id
+
+nombre_objeto :: Objeto -> String
+nombre_objeto = foldObjeto (\ _ name -> name) const id
 
 pepe = Personaje (0,0) "Pepe"
 pepe1 = Mueve pepe Norte
 pepeDead = Muere pepe1
 pepeDeadMovido = Mueve pepeDead Sur
+
+escudo_de_vibranium = Objeto (0,0) "Escudo de Vibranium"
+escudo_del_CapitanPepe = Tomado escudo_de_vibranium pepe
 
 {-
 nombre_objeto :: ?
