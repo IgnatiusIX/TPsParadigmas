@@ -163,8 +163,11 @@ tiene_thanos_todas_las_gemas = ?
 
 {-Ejercicio 7-}
 
-podemos_ganarle_a_thanos :: ?
-podemos_ganarle_a_thanos = ?
+podemos_ganarle_a_thanos :: Universo -> Bool
+podemos_ganarle_a_thanos u = if not tiene_thanos_todas_las_gemas u &&
+                      ((está_el_personaje "Thor" u && está_el_objeto "StormBreaker" u && en_poseción_de "Thor" (objeto_de_nombre "StormBreaker" u)) ||
+                      (está_el_personaje "Wanda" && está_el_personaje "Vision" && en_poseción_de "Vision" (objeto_de_nombre "Gema de la Mente" u))) 
+                      then True else False
 
 {-Tests-}
 
