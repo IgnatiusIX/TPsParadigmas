@@ -72,10 +72,9 @@ en_posesión_de n = foldObjeto (const (const False)) (\ r p -> nombre_personaje 
 objeto_libre :: Objeto -> Bool
 objeto_libre = foldObjeto (const (const True)) (const (const False)) (const False)
 
-
 norma2 :: (Float, Float) -> (Float, Float) -> Float
 norma2 p1 p2 = sqrt ((fst p1 - fst p2) ^ 2 + (snd p1 - snd p2) ^ 2)
-{-
+
 cantidad_de_objetos :: Universo -> Int
 cantidad_de_objetos = length . objetos_en
 
@@ -103,48 +102,42 @@ objeto_de_nombre :: String -> Universo -> Objeto
 objeto_de_nombre n u = foldr1 (\x1 x2 -> if nombre_objeto x1 == n then x1 else x2) (objetos_en u)
 
 es_una_gema :: Objeto -> Bool
-es_una_gema o = isPrefixOf "Gema de" (nombre_objeto o) -}
+es_una_gema o = isPrefixOf "Gema de" (nombre_objeto o) 
 
 {-Ejercicio 1-}
 
 foldPersonaje :: (Posición -> String -> a) -> ( a -> Dirección -> a) -> (a -> a) -> Personaje -> a 
 foldPersonaje fPersonaje fMueve fMuere p = case p of
-  Personaje pos name -> fPersonaje pos name
-  Mueve per dir -> fMueve  (foldPersonaje fPersonaje fMueve fMuere per) dir
-  Muere per -> fMuere (foldPersonaje fPersonaje fMueve fMuere per)
+    Personaje pos name -> fPersonaje pos name
+    Mueve per dir -> fMueve  (recFold per) dir
+    Muere per -> fMuere (recFold per)
+  where recFold = foldPersonaje fPersonaje fMueve fMuere
 
 foldObjeto :: (Posición -> String -> a) -> (a -> Personaje -> a) -> (a -> a) -> Objeto  -> a
 foldObjeto fObjeto fTomado fEsDestruido obj = case obj of
-  Objeto pos name -> fObjeto pos name
-  Tomado obj per -> fTomado (foldObjeto fObjeto fTomado fEsDestruido obj) per
-  EsDestruido obj -> fEsDestruido (foldObjeto fObjeto fTomado fEsDestruido obj)
-
+    Objeto pos name -> fObjeto pos name
+    Tomado obj per -> fTomado (recFold obj) per
+    EsDestruido obj -> fEsDestruido (recFold obj)
+  where recFold = foldObjeto fObjeto fTomado fEsDestruido
 
 {-Ejercicio 2-}
 
 posición_personaje :: Personaje -> Posición
-posición_personaje = foldPersonaje (\ pos _ -> pos) siguiente_posición id
+posición_personaje = foldPersonaje const siguiente_posición id
 
 nombre_objeto :: Objeto -> String
 nombre_objeto = foldObjeto (\ _ name -> name) const id
 
-pepe = Personaje (0,0) "Pepe"
-pepe1 = Mueve pepe Norte
-pepeDead = Muere pepe1
-pepeDeadMovido = Mueve pepeDead Sur
 
-escudo_de_vibranium = Objeto (0,0) "Escudo de Vibranium"
-escudo_del_CapitanPepe = Tomado escudo_de_vibranium pepe
-
-{-
 {-Ejercicio 3-}
 
-objetos_en :: ?
-objetos_en = ?
+objetos_en :: Universo -> [Objeto]
+objetos_en = foldr (\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) []
 
-personajes_en :: ?
-personajes_en = ?
-
+personajes_en :: Universo -> [Personaje]
+personajes_en = foldr (\elem rec -> if es_un_personaje elem then personaje_de elem : rec else rec) []
+-- Son iguales... Sería posible reciclar una?
+{-
 {-Ejercicio 4-}
 
 objetos_en_posesión_de :: ?
@@ -155,19 +148,21 @@ objetos_en_posesión_de = ?
 -- Asume que hay al menos un objeto
 objeto_libre_mas_cercano :: ?
 objeto_libre_mas_cercano = ?
-
+-}
 {-Ejercicio 6-}
 
-tiene_thanos_todas_las_gemas :: ?
-tiene_thanos_todas_las_gemas = ?
+tiene_thanos_todas_las_gemas :: Universo -> Bool
+tiene_thanos_todas_las_gemas u = gemas_de_thanos == 6
+  where
+  gemas_de_thanos = foldr (\obj rec -> if thanos_tiene_gema obj then 1 + rec else rec) 0 (objetos_en u)
+  thanos_tiene_gema = (\obj -> es_una_gema obj && en_posesión_de "Thanos" obj)
 
 {-Ejercicio 7-}
 
 podemos_ganarle_a_thanos :: Universo -> Bool
-podemos_ganarle_a_thanos u = if not tiene_thanos_todas_las_gemas u &&
-                      ((está_el_personaje "Thor" u && está_el_objeto "StormBreaker" u && en_poseción_de "Thor" (objeto_de_nombre "StormBreaker" u)) ||
-                      (está_el_personaje "Wanda" && está_el_personaje "Vision" && en_poseción_de "Vision" (objeto_de_nombre "Gema de la Mente" u))) 
-                      then True else False
+podemos_ganarle_a_thanos u = not (tiene_thanos_todas_las_gemas u) &&
+                      ((está_el_personaje "Thor" u && está_el_objeto "StormBreaker" u && en_posesión_de "Thor" (objeto_de_nombre "StormBreaker" u)) ||
+                      (está_el_personaje "Wanda" u && está_el_personaje "Vision" u && en_posesión_de "Vision" (objeto_de_nombre "Gema de la Mente" u))) 
 
 {-Tests-}
 
