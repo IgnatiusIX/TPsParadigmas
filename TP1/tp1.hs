@@ -163,7 +163,7 @@ podemos_ganarle_a_thanos :: Universo -> Bool
 podemos_ganarle_a_thanos u = not (tiene_thanos_todas_las_gemas u) &&
                       ((está_el_personaje "Thor" u && está_el_objeto "StormBreaker" u && en_posesión_de "Thor" (objeto_de_nombre "StormBreaker" u)) ||
                       (está_el_personaje "Wanda" u && está_el_personaje "Vision" u && en_posesión_de "Vision" (objeto_de_nombre "Gema de la Mente" u))) 
-
+{-
 {-Tests-}
 
 main :: IO Counts
