@@ -140,8 +140,8 @@ personajes_en = foldr (\elem rec -> if es_un_personaje elem then personaje_de el
 {-
 {-Ejercicio 4-}
 
-objetos_en_posesión_de :: ?
-objetos_en_posesión_de = ?
+objetos_en_posesión_de :: Personaje -> Universo -> [Objeto]
+objetos_en_posesión_de p u = foldr(\elem rec -> if (es_un_objeto elem) && (en_posesión_de (nombre_personaje p) (objeto_de elem)) then (objeto_de elem):rec else rec) [] u
 
 {-Ejercicio 5-}
 
@@ -187,8 +187,17 @@ allTests = test [ -- Reemplazar los tests de prueba por tests propios
   ]
 
 phil = Personaje (0,0) "Phil"
+cap = Personaje (2,1) "cap"
+iron_man = Personaje (10,22) "iron man"
+mark_12 = Tomado (Objeto (100,100) "Mark 12") iron_man
+lentes = Tomado (Objeto (3,3) "lentes") iron_man
+escudo = Tomado (Objeto (22,2) "escudo") cap
+paleta_dhs = Tomado (Objeto (20,20) "paleta dhs") mario
+mario = Personaje (1203,3030) "mario"
+zapas_joma = Tomado (Objeto (10,2) "zapas_joma") mario
 mjölnir = Objeto (2,2) "Mjölnir"
 universo_sin_thanos = universo_con [phil] [mjölnir]
+pingpong = universo_con [phil,cap,iron_man,mario] [mark_12,lentes,escudo,paleta_dhs,zapas_joma]
 
 testsEj1 = test [ -- Casos de test para el ejercicio 1
   foldPersonaje (\p s -> 0) (\r d -> r+1) (\r -> r+1) phil             -- Caso de test 1 - expresión a testear
