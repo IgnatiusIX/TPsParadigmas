@@ -126,7 +126,7 @@ posición_personaje :: Personaje -> Posición
 posición_personaje = foldPersonaje const siguiente_posición id
 
 nombre_objeto :: Objeto -> String
-nombre_objeto = foldObjeto (\ _ name -> name) const id
+nombre_objeto = foldObjeto (flip const) const id
 
 
 {-Ejercicio 3-}
@@ -156,13 +156,20 @@ tiene_thanos_todas_las_gemas u = gemas_de_thanos == 6
   where
   gemas_de_thanos = foldr (\obj rec -> if thanos_tiene_gema obj then 1 + rec else rec) 0 (objetos_en u)
   thanos_tiene_gema = (\obj -> es_una_gema obj && en_posesión_de "Thanos" obj)
+--Habria que añadir la consideracion de que Thanos tiene que estar en el universo?
 
 {-Ejercicio 7-}
 
 podemos_ganarle_a_thanos :: Universo -> Bool
-podemos_ganarle_a_thanos u = not (tiene_thanos_todas_las_gemas u) &&
-                      ((está_el_personaje "Thor" u && está_el_objeto "StormBreaker" u && en_posesión_de "Thor" (objeto_de_nombre "StormBreaker" u)) ||
-                      (está_el_personaje "Wanda" u && está_el_personaje "Vision" u && en_posesión_de "Vision" (objeto_de_nombre "Gema de la Mente" u))) 
+podemos_ganarle_a_thanos u = not thanosWin  &&
+                      ((thor && stormBreaker) || (wanda && vision && gemaDeLaMente))
+  where
+  thanosWin = está_el_personaje "Thanos" u && está_vivo (personaje_de_nombre "Thanos" u) && tiene_thanos_todas_las_gemas u
+  thor = está_el_personaje "Thor" u && está_vivo (personaje_de_nombre "Thor" u)
+  stormBreaker = está_el_objeto "StormBreaker" u && en_posesión_de "Thor" (objeto_de_nombre "StormBreaker" u) && not (fue_destruido (objeto_de_nombre "StormBreaker" u))
+  wanda = está_el_personaje "Wanda" u && está_vivo (personaje_de_nombre "Wanda" u)
+  vision = está_el_personaje "Vision" u && está_vivo (personaje_de_nombre "Vision" u) 
+  gemaDeLaMente = está_el_objeto "Gema de la Mente" u && en_posesión_de "Vision" (objeto_de_nombre "Gema de la Mente" u) && not (fue_destruido (objeto_de_nombre "Gema de la Mente" u))
 {-
 {-Tests-}
 
