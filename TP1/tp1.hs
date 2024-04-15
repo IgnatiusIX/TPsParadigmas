@@ -146,8 +146,16 @@ objetos_en_posesión_de p u = foldr(\elem rec -> if (es_un_objeto elem) && (en_p
 {-Ejercicio 5-}
 
 -- Asume que hay al menos un objeto
-objeto_libre_mas_cercano :: ?
-objeto_libre_mas_cercano = ?
+objeto_libre_mas_cercano :: Universo -> Personaje -> Objeto
+objeto_libre_mas_cercano u p = fst $ foldl (\(fst_free_obj, distance) obj ->
+    let distA = distancia (Left p) (Right obj) in
+    if distA < distance then (obj, distA) else (fst_free_obj, distance))
+    (fst_free_obj, distance) free_obj
+  where
+    distance = distancia (Left p) (Right fst_free_obj)
+    free_obj = objetos_libres_en u
+    fst_free_obj = head (objetos_libres_en u)
+    
 -}
 {-Ejercicio 6-}
 
@@ -198,6 +206,10 @@ zapas_joma = Tomado (Objeto (10,2) "zapas_joma") mario
 mjölnir = Objeto (2,2) "Mjölnir"
 universo_sin_thanos = universo_con [phil] [mjölnir]
 pingpong = universo_con [phil,cap,iron_man,mario] [mark_12,lentes,escudo,paleta_dhs,zapas_joma]
+
+Mini test Ej5
+universoPrueba = [Right (Objeto (2, 3) "obj1"), Right (Objeto (1, 2) "obj2"), Right (Objeto (0, 1) "obj3")]
+personajePrueba = Personaje (0, 0) "personaje1"
 
 testsEj1 = test [ -- Casos de test para el ejercicio 1
   foldPersonaje (\p s -> 0) (\r d -> r+1) (\r -> r+1) phil             -- Caso de test 1 - expresión a testear
