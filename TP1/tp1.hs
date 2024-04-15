@@ -142,7 +142,7 @@ personajes_en = foldr (\elem rec -> if es_un_personaje elem then personaje_de el
 
 objetos_en_posesión_de :: Personaje -> Universo -> [Objeto]
 objetos_en_posesión_de p u = foldr(\elem rec -> if (es_un_objeto elem) && (en_posesión_de (nombre_personaje p) (objeto_de elem)) then (objeto_de elem):rec else rec) [] u
-
+-}
 {-Ejercicio 5-}
 
 -- Asume que hay al menos un objeto
@@ -156,7 +156,7 @@ objeto_libre_mas_cercano u p = fst $ foldl (\(fst_free_obj, distance) obj ->
     free_obj = objetos_libres_en u
     fst_free_obj = head (objetos_libres_en u)
     
--}
+
 {-Ejercicio 6-}
 
 tiene_thanos_todas_las_gemas :: Universo -> Bool
