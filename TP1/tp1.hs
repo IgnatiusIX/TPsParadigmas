@@ -133,16 +133,23 @@ nombre_objeto = foldObjeto (flip const) const id
 
 objetos_en :: Universo -> [Objeto]
 objetos_en = foldr (\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) []
+-- posible reescritura: map objeto_de (filter es_un_objeto u)
 
 personajes_en :: Universo -> [Personaje]
 personajes_en = foldr (\elem rec -> if es_un_personaje elem then personaje_de elem : rec else rec) []
+-- posible reescritura: map personaje_de (filter es_un_personaje u)
+
 -- Son iguales... Sería posible reciclar una?
-{-
+
 {-Ejercicio 4-}
 
 objetos_en_posesión_de :: Personaje -> Universo -> [Objeto]
 objetos_en_posesión_de p u = foldr(\elem rec -> if (es_un_objeto elem) && (en_posesión_de (nombre_personaje p) (objeto_de elem)) then (objeto_de elem):rec else rec) [] u
--}
+
+-- OJO, la consigna dice "dado el nombre de un personaje", así que recibe string
+-- sería posible reemplazar u por (objetos_en u) y se simplifica todo. Al mismo tiempo, se podría usar filter?
+-- obj_en_pos_de n u = filter (en_posesión_de n) (objetos_en u)
+
 {-Ejercicio 5-}
 
 -- Asume que hay al menos un objeto
@@ -156,15 +163,15 @@ objeto_libre_mas_cercano u p = fst $ foldl (\(fst_free_obj, distance) obj ->
     free_obj = objetos_libres_en u
     fst_free_obj = head (objetos_libres_en u)
     
+-- Habría que preguntar si debe estar libre?? En la consigna sólo dice "el objeto más cercano" (a pesar del nombre de la función).
 
 {-Ejercicio 6-}
 
 tiene_thanos_todas_las_gemas :: Universo -> Bool
-tiene_thanos_todas_las_gemas u = gemas_de_thanos == 6
+tiene_thanos_todas_las_gemas u = está_el_personaje "Thanos" u && gemas_de_thanos == 6
   where
-  gemas_de_thanos = foldr (\obj rec -> if thanos_tiene_gema obj then 1 + rec else rec) 0 (objetos_en u)
-  thanos_tiene_gema = (\obj -> es_una_gema obj && en_posesión_de "Thanos" obj)
---Habria que añadir la consideracion de que Thanos tiene que estar en el universo?
+    gemas_de_thanos = length (filter es_una_gema objetos_de_thanos)
+    objetos_de_thanos = objetos_en_posesión_de "Thanos" u
 
 {-Ejercicio 7-}
 
@@ -178,6 +185,10 @@ podemos_ganarle_a_thanos u = not thanosWin  &&
   wanda = está_el_personaje "Wanda" u && está_vivo (personaje_de_nombre "Wanda" u)
   vision = está_el_personaje "Vision" u && está_vivo (personaje_de_nombre "Vision" u) 
   gemaDeLaMente = está_el_objeto "Gema de la Mente" u && en_posesión_de "Vision" (objeto_de_nombre "Gema de la Mente" u) && not (fue_destruido (objeto_de_nombre "Gema de la Mente" u))
+
+-- En todos los casos que hay "not (fue_destruido...)", te debería cubrir la función "está_el_objeto"? Si fue destruido, esa función devuelve falso. Idem con está_vivo.
+-- Ahí agregué las guardas de que esté thanos esté en el universo, así que con llamar a "tiene_thanos..." ya te asegurás del resto.
+
 {-
 {-Tests-}
 
