@@ -143,15 +143,14 @@ personajes_en = foldr (\elem rec -> if es_un_personaje elem then personaje_de el
 
 {-Ejercicio 4-}
 
-objetos_en_posesión_de :: Personaje -> Universo -> [Objeto]
-objetos_en_posesión_de p u = foldr(\elem rec -> if (es_un_objeto elem) && (en_posesión_de (nombre_personaje p) (objeto_de elem)) then (objeto_de elem):rec else rec) [] u
+objetos_en_posesión_de :: String -> Universo -> [Objeto]
+objetos_en_posesión_de p u = foldr(\elem rec -> if (en_posesión_de p elem) then elem:rec else rec) [] (objetos_en u)
 
 -- OJO, la consigna dice "dado el nombre de un personaje", así que recibe string
 -- sería posible reemplazar u por (objetos_en u) y se simplifica todo. Al mismo tiempo, se podría usar filter?
 -- obj_en_pos_de n u = filter (en_posesión_de n) (objetos_en u)
 
 {-Ejercicio 5-}
-
 -- Asume que hay al menos un objeto
 objeto_libre_mas_cercano :: Universo -> Personaje -> Objeto
 objeto_libre_mas_cercano u p = fst $ foldl (\(fst_free_obj, distance) obj ->
@@ -215,8 +214,15 @@ paleta_dhs = Tomado (Objeto (20,20) "paleta dhs") mario
 mario = Personaje (1203,3030) "mario"
 zapas_joma = Tomado (Objeto (10,2) "zapas_joma") mario
 mjölnir = Objeto (2,2) "Mjölnir"
+gema_de_la_empanada = Objeto (1010,2020) "gema de la empanada"
+empanda_de_carne = Objeto (120,102) "empanada de carne"
+empanda_de_pollo = Tomado (Objeto (101,101) "empanada de pollo") gabi
+empanada_de_humita = Objeto (101,103) "empanada de humita"
+nacho = Personaje (100,100) "nacho"
+gabi = Personaje (19,19) "gabi"
+microfono = Tomado (Objeto (19,20) "microfono") gabi
 universo_sin_thanos = universo_con [phil] [mjölnir]
-pingpong = universo_con [phil,cap,iron_man,mario] [mark_12,lentes,escudo,paleta_dhs,zapas_joma]
+uniPong = universo_con [phil,cap,iron_man,mario,gabi] [mark_12,lentes,escudo,paleta_dhs,zapas_joma,microfono]
 
 Mini test Ej5
 universoPrueba = [Right (Objeto (2, 3) "obj1"), Right (Objeto (1, 2) "obj2"), Right (Objeto (0, 1) "obj3")]
