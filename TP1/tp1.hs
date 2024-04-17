@@ -236,6 +236,7 @@ gema_del_poder = Tomado (Objeto (0,0) "Gema del Poder") thanos
 --Universos
 universo_sin_thanos = universo_con [phil] [mjölnir]
 universo_thanos_win = universo_con [thanos, thor] [stormBreaker, gema_de_la_menteThanos, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, gema_del_tiempo]
+universo_thanos_win_dead_thor = universo_con [thanos,(Muere thor), vision] [stormBreaker, gema_de_la_menteVision, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, gema_del_tiempo]
 universo_thanos_lose1 = universo_con [thanos, thor, vision] [stormBreaker, gema_de_la_menteVision, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, gema_del_tiempo]
 universo_thanos_lose2 = universo_con [thanos, wanda, vision] [gema_de_la_menteVision, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, gema_del_tiempo]
 uniPong = universo_con [phil,cap,iron_man,mario,gabi,capitanEmpanada] [mark_12,lentes,escudo,paleta_dhs,zapas_joma,microfono,empanda_de_carne]
@@ -281,6 +282,7 @@ testsEj7 = test [ -- Casos de test para el ejercicio 7
   podemos_ganarle_a_thanos universo_sin_thanos         -- Caso de test 1 - expresión a testear
     ~=? True,                                       -- Caso de test 1 - resultado esperado
   podemos_ganarle_a_thanos universo_thanos_win ~=? False,
+  podemos_ganarle_a_thanos universo_thanos_win_dead_thor ~=? False,
   podemos_ganarle_a_thanos universo_thanos_lose1 ~=? True,
   podemos_ganarle_a_thanos universo_thanos_lose2 ~=? True
   ]
