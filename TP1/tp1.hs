@@ -178,15 +178,12 @@ podemos_ganarle_a_thanos :: Universo -> Bool
 podemos_ganarle_a_thanos u = not thanosWin  &&
                       ((thor && stormBreaker) || (wanda && vision && gemaDeLaMente))
   where
-  thanosWin = está_el_personaje "Thanos" u && está_vivo (personaje_de_nombre "Thanos" u) && tiene_thanos_todas_las_gemas u
-  thor = está_el_personaje "Thor" u && está_vivo (personaje_de_nombre "Thor" u)
-  stormBreaker = está_el_objeto "StormBreaker" u && en_posesión_de "Thor" (objeto_de_nombre "StormBreaker" u) && not (fue_destruido (objeto_de_nombre "StormBreaker" u))
-  wanda = está_el_personaje "Wanda" u && está_vivo (personaje_de_nombre "Wanda" u)
-  vision = está_el_personaje "Vision" u && está_vivo (personaje_de_nombre "Vision" u) 
-  gemaDeLaMente = está_el_objeto "Gema de la Mente" u && en_posesión_de "Vision" (objeto_de_nombre "Gema de la Mente" u) && not (fue_destruido (objeto_de_nombre "Gema de la Mente" u))
-
--- En todos los casos que hay "not (fue_destruido...)", te debería cubrir la función "está_el_objeto"? Si fue destruido, esa función devuelve falso. Idem con está_vivo.
--- Ahí agregué las guardas de que esté thanos esté en el universo, así que con llamar a "tiene_thanos..." ya te asegurás del resto.
+  thanosWin = está_el_personaje "Thanos" u && tiene_thanos_todas_las_gemas u
+  thor = está_el_personaje "Thor" u 
+  stormBreaker = está_el_objeto "StormBreaker" u && en_posesión_de "Thor" (objeto_de_nombre "StormBreaker" u)
+  wanda = está_el_personaje "Wanda" u
+  vision = está_el_personaje "Vision" u
+  gemaDeLaMente = está_el_objeto "Gema de la Mente" u && en_posesión_de "Vision" (objeto_de_nombre "Gema de la Mente" u)
 
 {-
 {-Tests-}
