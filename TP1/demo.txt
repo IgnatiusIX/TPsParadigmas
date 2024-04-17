@@ -30,7 +30,7 @@ Caso Inductivo
 
                 elem o (objetos_en (u:us)) ⇒ elem (Right o) (u:us)
 
-                elem o (mapFilter es_un_objeto objeto_de (u:us)) ⇒ elem (Right o) (u:us)
+                elem o (filterMap es_un_objeto objeto_de (u:us)) ⇒ elem (Right o) (u:us)
 
                 elem o (foldr (\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) [] (u:us)) ⇒ elem (Right o) (u:us)
 
