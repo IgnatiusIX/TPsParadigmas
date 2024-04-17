@@ -36,7 +36,7 @@ Caso Inductivo
 
             Caso donde es_un_objeto u == False
 
-            Desarrollando nos queda algo de esta pinta
+            Desarrollando nos queda algo de esta pinta (pasamos el foldr devuelta en la funcion original para mayor legibilidad)
 
                 elem o (objetos_en us) ⇒ (Right o) == u || elem (Right o) us
 
