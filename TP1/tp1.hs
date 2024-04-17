@@ -211,15 +211,15 @@ paleta_dhs = Tomado (Objeto (20,20) "paleta dhs") mario
 mario = Personaje (1203,3030) "mario"
 zapas_joma = Tomado (Objeto (10,2) "zapas_joma") mario
 mjölnir = Objeto (2,2) "Mjölnir"
-gema_de_la_empanada = Objeto (1010,2020) "gema de la empanada"
-empanda_de_carne = Objeto (120,102) "empanada de carne"
-empanda_de_pollo = Tomado (Objeto (101,101) "empanada de pollo") gabi
-empanada_de_humita = Objeto (101,103) "empanada de humita"
-nacho = Personaje (100,100) "nacho"
+gema_de_la_empanada = Objeto (1010,2020) "Gema de la Empanada"
+empanda_de_carne = Tomado (Objeto (120,102) "empanada de carne") capitanEmpanada
+empanda_de_pollo = Tomado (Objeto (101,101) "empanada de pollo") capitanEmpanada
+empanada_de_humita = Tomado (Objeto (101,103) "empanada de humita") capitanEmpanada
+capitanEmpanada = Personaje (100,100) "Capitan Empanada"
 gabi = Personaje (19,19) "gabi"
 microfono = Tomado (Objeto (19,20) "microfono") gabi
 universo_sin_thanos = universo_con [phil] [mjölnir]
-uniPong = universo_con [phil,cap,iron_man,mario,gabi] [mark_12,lentes,escudo,paleta_dhs,zapas_joma,microfono]
+uniPong = universo_con [phil,cap,iron_man,mario,gabi,capitanEmpanada] [mark_12,lentes,escudo,paleta_dhs,zapas_joma,microfono,empanda_de_carne]
 
 Mini test Ej5
 universoPrueba = [Right (Objeto (2, 3) "obj1"), Right (Objeto (1, 2) "obj2"), Right (Objeto (0, 1) "obj3")]
