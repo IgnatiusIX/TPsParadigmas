@@ -1,4 +1,4 @@
-import Test.HUnit
+--import Test.HUnit
 
 {-- Tipos --}
 
@@ -132,23 +132,26 @@ nombre_objeto = foldObjeto (flip const) const id
 {-Ejercicio 3-}
 
 objetos_en :: Universo -> [Objeto]
-objetos_en = foldr (\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) []
--- posible reescritura: map objeto_de (filter es_un_objeto u)
+objetos_en = filterMap es_un_objeto objeto_de
 
 personajes_en :: Universo -> [Personaje]
-personajes_en = foldr (\elem rec -> if es_un_personaje elem then personaje_de elem : rec else rec) []
--- posible reescritura: map personaje_de (filter es_un_personaje u)
+personajes_en = filterMap es_un_personaje personaje_de
 
--- Son iguales... Sería posible reciclar una?
+filterMap :: (a -> Bool) -> (a -> b) -> [a] -> [b]
+filterMap f g = foldr (\elem rec -> if f elem then g elem : rec else rec) []
+
+{- Para devolver listas de Objeto's o Personaje's, estas funciones
+ - van filtrando por elementos que sean de tipo "(Left|Right) *" correspondientemente. Al mismo tiempo, se 
+ - les va aplicando la función (personaje|objeto)_de para 'sacarles el tipo Either' 
+ - a los elementos del resultado.
+ -
+ - Usamos filterMap porque ayuda a aumentar la legibilidad.
+ -}
 
 {-Ejercicio 4-}
 
 objetos_en_posesión_de :: String -> Universo -> [Objeto]
 objetos_en_posesión_de p u = foldr(\elem rec -> if (en_posesión_de p elem) then elem:rec else rec) [] (objetos_en u)
-
--- OJO, la consigna dice "dado el nombre de un personaje", así que recibe string
--- sería posible reemplazar u por (objetos_en u) y se simplifica todo. Al mismo tiempo, se podría usar filter?
--- obj_en_pos_de n u = filter (en_posesión_de n) (objetos_en u)
 
 {-Ejercicio 5-}
 -- Asume que hay al menos un objeto
@@ -171,6 +174,11 @@ tiene_thanos_todas_las_gemas u = está_el_personaje "Thanos" u && gemas_de_thano
   where
     gemas_de_thanos = length (filter es_una_gema objetos_de_thanos)
     objetos_de_thanos = objetos_en_posesión_de "Thanos" u
+
+{- "tiene_thanos..." calcula los objetos en posesión de Thanos y obtiene aquellos que sean gemas (que se
+ - llamen "Gema de..."). Luego, se devuelve si Thanos tiene exactamente 6 gemas del infinito.
+ - Obviamente, todo esto se realiza si él está, vivo, en el universo.
+ -}
 
 {-Ejercicio 7-}
 
@@ -200,6 +208,7 @@ allTests = test [ -- Reemplazar los tests de prueba por tests propios
   "ejercicio6" ~: testsEj6,
   "ejercicio7" ~: testsEj7
   ]
+-}
 
 phil = Personaje (0,0) "Phil"
 cap = Personaje (2,1) "cap"
@@ -220,6 +229,8 @@ gabi = Personaje (19,19) "gabi"
 microfono = Tomado (Objeto (19,20) "microfono") gabi
 universo_sin_thanos = universo_con [phil] [mjölnir]
 uniPong = universo_con [phil,cap,iron_man,mario,gabi,capitanEmpanada] [mark_12,lentes,escudo,paleta_dhs,zapas_joma,microfono,empanda_de_carne]
+
+{-
 
 Mini test Ej5
 universoPrueba = [Right (Objeto (2, 3) "obj1"), Right (Objeto (1, 2) "obj2"), Right (Objeto (0, 1) "obj3")]
