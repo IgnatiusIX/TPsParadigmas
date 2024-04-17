@@ -95,7 +95,3 @@ Caso Inductivo
                     Por HI
 
                         True
-
-
-
-
