@@ -1,4 +1,4 @@
---import Test.HUnit
+import Test.HUnit
 
 {-- Tipos --}
 
@@ -208,6 +208,16 @@ allTests = test [ -- Reemplazar los tests de prueba por tests propios
   "ejercicio6" ~: testsEj6,
   "ejercicio7" ~: testsEj7
   ]
+
+expectAny :: a -> [a] -> Bool
+expectAny actual expected = elem actual expected ~? ("Se esperaba cualquiera de: " ++ show expected ++ "\n pero se recibió: " ++ show actual)
+{- expectAny toma el resultado de aplicar la función y una lista de posibles soluciones al caso de test.
+ - 
+ - expectAny se usa en los casos de test donde puede haber "empates" y la solución puede ser cualquiera de
+ - los "expected". 
+ - Esta función se la acreditamos a la cátedra de IP.
+ -}
+
 -}
 
 phil = Personaje (0,0) "Phil"
