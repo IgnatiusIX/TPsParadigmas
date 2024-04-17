@@ -1,0 +1,95 @@
+∀ us :: Universo . ∀ o :: Objeto . elem o (objetos_en us) ⇒ elem (Right o) us
+
+Vamos a probar esto por inducción sobre us
+
+Queremos probar 
+
+                P(us) ⇒ P(u:us)
+
+                P(us) = HI = elem o (objetos_en us) ⇒ elem (Right o) us
+
+Caso Base
+
+            us == []
+
+            P([])
+
+            elem o (objetos_en []) ⇒ elem (Right o) []
+
+            False ⇒ _ 
+
+            True
+
+Caso Inductivo
+
+            us = (u:us)
+
+            P(u:us)
+
+                elem o (objetos_en (u:us)) ⇒ elem (Right o) (u:us)
+
+            Caso donde es_un_objeto u == False
+
+            Desarrollando nos queda algo de esta pinta
+
+                elem o (objetos_en us) ⇒ Right o == u || elem Right o us
+
+                elem o (objetos_en us) ⇒ Right o == Falso || elem Right o us
+
+                elem o (objetos_en us) ⇒ Right o == elem Right o us
+
+                Por HI
+
+                    True
+
+            Caso donde es_un_objeto u == True
+
+            Desarrollando nos queda algo de esta pinta
+
+                elem o ((objetos_de u) : objetos_en us) ⇒ (Right o) == (Right u) || elem (Right o) us
+
+                o == (objeto_de u) || elem o (objetos_de us) ⇒ (Right o) == (Right u) || elem (Right o) us
+
+            Nos quedaria por probar 
+
+                o == (objeto_de u) ⇒ (Right o) == (Right u)
+
+                Luego tomamos
+
+                    u = (Right x), ∀x::Objeto
+
+                Entonces 
+
+                    objeto_de u = objeto_de (Right x) = x
+
+                Por lo que reemplazando quedaria
+
+                    o == x || elem o (objetos_de us) ⇒ (Right o) == (Right x) || elem (Right o) us
+
+                    Ahora si x = o 
+
+                        o == o || elem o (objetos_de us) ⇒ (Right o) == (Right o) || elem (Right o) us
+
+                        True || elem o (objetos_de us) ⇒ True || elem (Right o) us
+
+                        True || _ ⇒ True || _ 
+                         
+                        True ⇒ True
+
+                        True
+
+                    Ahora si x != o 
+
+                        o == x || elem o (objetos_de us) ⇒ (Right o) == (Right x) || elem (Right o) us
+
+                        False || elem o (objetos_de us) ⇒ False || elem (Right o) us
+
+                        elem o (objetos_de us) ⇒ elem (Right o) us
+
+                        Por HI
+
+                            True
+
+
+
+
