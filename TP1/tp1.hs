@@ -175,17 +175,16 @@ tiene_thanos_todas_las_gemas u = está_el_personaje "Thanos" u && gemas_de_thano
 {-Ejercicio 7-}
 
 podemos_ganarle_a_thanos :: Universo -> Bool
-podemos_ganarle_a_thanos u = not thanosWin  &&
-                      ((thor && stormBreaker) || (wanda && vision && gemaDeLaMente))
+podemos_ganarle_a_thanos u = (not (tiene_thanos_todas_las_gemas u)  &&
+                      ((thor && stormBreaker) || (wanda && vision && gemaDeLaMente))) || not (está_el_personaje "Thanos" u)
   where
-  thanosWin = está_el_personaje "Thanos" u && tiene_thanos_todas_las_gemas u
   thor = está_el_personaje "Thor" u 
   stormBreaker = está_el_objeto "StormBreaker" u && en_posesión_de "Thor" (objeto_de_nombre "StormBreaker" u)
   wanda = está_el_personaje "Wanda" u
   vision = está_el_personaje "Vision" u
   gemaDeLaMente = está_el_objeto "Gema de la Mente" u && en_posesión_de "Vision" (objeto_de_nombre "Gema de la Mente" u)
 
-{-
+
 {-Tests-}
 
 main :: IO Counts
@@ -201,9 +200,18 @@ allTests = test [ -- Reemplazar los tests de prueba por tests propios
   "ejercicio7" ~: testsEj7
   ]
 
+--Personajes
 phil = Personaje (0,0) "Phil"
 cap = Personaje (2,1) "cap"
 iron_man = Personaje (10,22) "iron man"
+thanos = Personaje (10,100) "Thanos"
+vision = Mueve (Personaje (20,20) "Vision") Norte
+wanda = Personaje (0,0) "Wanda"
+thor = Personaje (4,4) "Thor"
+capitanEmpanada = Personaje (100,100) "Capitan Empanada"
+gabi = Personaje (19,19) "gabi"
+
+--Objetos
 mark_12 = Tomado (Objeto (100,100) "Mark 12") iron_man
 lentes = Tomado (Objeto (3,3) "lentes") iron_man
 escudo = Tomado (Objeto (22,2) "escudo") cap
@@ -211,17 +219,28 @@ paleta_dhs = Tomado (Objeto (20,20) "paleta dhs") mario
 mario = Personaje (1203,3030) "mario"
 zapas_joma = Tomado (Objeto (10,2) "zapas_joma") mario
 mjölnir = Objeto (2,2) "Mjölnir"
-gema_de_la_empanada = Objeto (1010,2020) "Gema de la Empanada"
 empanda_de_carne = Tomado (Objeto (120,102) "empanada de carne") capitanEmpanada
 empanda_de_pollo = Tomado (Objeto (101,101) "empanada de pollo") capitanEmpanada
 empanada_de_humita = Tomado (Objeto (101,103) "empanada de humita") capitanEmpanada
-capitanEmpanada = Personaje (100,100) "Capitan Empanada"
-gabi = Personaje (19,19) "gabi"
 microfono = Tomado (Objeto (19,20) "microfono") gabi
+stormBreaker = Tomado (Objeto (4,4) "StormBreaker") thor
+gema_de_la_empanada = Objeto (1010,2020) "Gema de la Empanada"
+gema_de_la_menteVision = Tomado (Objeto (0,0) "Gema de la Mente") vision
+gema_de_la_menteThanos = Tomado (Objeto (0,0) "Gema de la Mente") thanos
+gema_del_tiempo = Tomado (Objeto (0,0) "Gema del Tiempo") thanos
+gema_del_espacio = Tomado (Objeto (0,0) "Gema del Espacio") thanos
+gema_del_alma = Tomado (Objeto (0,0) "Gema del Alma") thanos 
+gema_de_la_realidad = Tomado (Objeto (0,0) "Gema de la Realidad") thanos
+gema_del_poder = Tomado (Objeto (0,0) "Gema del Poder") thanos
+
+--Universos
 universo_sin_thanos = universo_con [phil] [mjölnir]
+universo_thanos_win = universo_con [thanos, thor] [stormBreaker, gema_de_la_menteThanos, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, gema_del_tiempo]
+universo_thanos_lose1 = universo_con [thanos, thor, vision] [stormBreaker, gema_de_la_menteVision, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, gema_del_tiempo]
+universo_thanos_lose2 = universo_con [thanos, wanda, vision] [gema_de_la_menteVision, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, gema_del_tiempo]
 uniPong = universo_con [phil,cap,iron_man,mario,gabi,capitanEmpanada] [mark_12,lentes,escudo,paleta_dhs,zapas_joma,microfono,empanda_de_carne]
 
-Mini test Ej5
+--Mini test Ej5
 universoPrueba = [Right (Objeto (2, 3) "obj1"), Right (Objeto (1, 2) "obj2"), Right (Objeto (0, 1) "obj3")]
 personajePrueba = Personaje (0, 0) "personaje1"
 
@@ -249,7 +268,7 @@ testsEj4 = test [ -- Casos de test para el ejercicio 4
   ]
 
 testsEj5 = test [ -- Casos de test para el ejercicio 5
-  objeto_libre_mas_cercano phil [Right mjölnir]       -- Caso de test 1 - expresión a testear
+  objeto_libre_mas_cercano [Right mjölnir] phil      -- Caso de test 1 - expresión a testear
     ~=? mjölnir                                       -- Caso de test 1 - resultado esperado
   ]
 
@@ -260,6 +279,9 @@ testsEj6 = test [ -- Casos de test para el ejercicio 6
 
 testsEj7 = test [ -- Casos de test para el ejercicio 7
   podemos_ganarle_a_thanos universo_sin_thanos         -- Caso de test 1 - expresión a testear
-    ~=? False                                          -- Caso de test 1 - resultado esperado
+    ~=? True,                                       -- Caso de test 1 - resultado esperado
+  podemos_ganarle_a_thanos universo_thanos_win ~=? False,
+  podemos_ganarle_a_thanos universo_thanos_lose1 ~=? True,
+  podemos_ganarle_a_thanos universo_thanos_lose2 ~=? True
   ]
-  -}
+
