@@ -32,7 +32,7 @@ Caso Inductivo
 
                 elem o (mapFilter es_un_objeto objeto_de (u:us)) ⇒ elem (Right o) (u:us)
 
-                elem o (foldr (\elem rec -> if es_un_personaje elem then personaje_de elem : rec else rec) [] (u:us)) ⇒ elem (Right o) (u:us)
+                elem o (foldr (\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) [] (u:us)) ⇒ elem (Right o) (u:us)
 
             Caso donde es_un_objeto u == False
 
