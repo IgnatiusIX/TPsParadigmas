@@ -183,11 +183,11 @@ podemos_ganarle_a_thanos :: Universo -> Bool
 podemos_ganarle_a_thanos u = (not (tiene_thanos_todas_las_gemas u)  &&
                       ((thor && stormBreaker) || (wanda && vision && gemaDeLaMente))) || not (está_el_personaje "Thanos" u)
   where
-  thor = está_el_personaje "Thor" u 
-  stormBreaker = está_el_objeto "StormBreaker" u && en_posesión_de "Thor" (objeto_de_nombre "StormBreaker" u)
-  wanda = está_el_personaje "Wanda" u
-  vision = está_el_personaje "Vision" u
-  gemaDeLaMente = está_el_objeto "Gema de la Mente" u && en_posesión_de "Vision" (objeto_de_nombre "Gema de la Mente" u)
+	thor = está_el_personaje "Thor" u 
+	stormBreaker = está_el_objeto "StormBreaker" u && en_posesión_de "Thor" (objeto_de_nombre "StormBreaker" u)
+	wanda = está_el_personaje "Wanda" u
+	vision = está_el_personaje "Vision" u
+	gemaDeLaMente = está_el_objeto "Gema de la Mente" u && en_posesión_de "Vision" (objeto_de_nombre "Gema de la Mente" u)
 
 {-Tests-}
 main :: IO Counts
@@ -223,6 +223,7 @@ thor = Personaje (4,4) "Thor"
 capitanEmpanada = Personaje (100,100) "Capitan Empanada"
 gabi = Personaje (19,19) "gabi"
 mario = Personaje (1203,3030) "mario"
+personajePrueba = Personaje (0, 0) "personaje1"
 
 --Objetos
 mark_12 = Tomado (Objeto (100,100) "Mark 12") iron_man
@@ -246,16 +247,18 @@ gema_de_la_realidad = Tomado (Objeto (0,0) "Gema de la Realidad") thanos
 gema_del_poder = Tomado (Objeto (0,0) "Gema del Poder") thanos
 
 --Universos
+universoPrueba = [Right (Objeto (2, 3) "obj1"), Right (Objeto (1, 2) "obj2"), Right (Objeto (0, 1) "obj3")]
+uniPong = universo_con [phil,cap,iron_man,mario,gabi,capitanEmpanada] [mark_12,lentes,escudo,paleta_dhs,zapas_joma,microfono,empanda_de_carne]
+
+--Universos relacionados a Thanos
 universo_sin_thanos = universo_con [phil] [mjölnir]
 universo_thanos_win = universo_con [thanos, thor] [stormBreaker, gema_de_la_menteThanos, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, gema_del_tiempo]
 universo_thanos_win_dead_thor = universo_con [thanos,(Muere thor), vision] [stormBreaker, gema_de_la_menteVision, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, gema_del_tiempo]
 universo_thanos_lose1 = universo_con [thanos, thor, vision] [stormBreaker, gema_de_la_menteVision, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, gema_del_tiempo]
 universo_thanos_lose2 = universo_con [thanos, wanda, vision] [gema_de_la_menteVision, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, gema_del_tiempo]
-uniPong = universo_con [phil,cap,iron_man,mario,gabi,capitanEmpanada] [mark_12,lentes,escudo,paleta_dhs,zapas_joma,microfono,empanda_de_carne]
-
---Mini test Ej5
-universoPrueba = [Right (Objeto (2, 3) "obj1"), Right (Objeto (1, 2) "obj2"), Right (Objeto (0, 1) "obj3")]
-personajePrueba = Personaje (0, 0) "personaje1"
+universo_gema_rota = universo_con [thor, phil, vision, thanos] [(Tomado empanada_de_humita thanos),gema_de_la_menteThanos, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, (EsDestruido gema_del_tiempo), (Tomado mjölnir thanos)]
+universo_faltan_gemas = universo_con [thor, phil, vision, thanos] [(Tomado empanada_de_humita thanos),gema_de_la_menteThanos, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, (Tomado mjölnir thanos)]
+universo_thanos_muerto = universo_con [(Muerto thanos), thor] [stormBreaker, gema_de_la_menteThanos, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, gema_del_tiempo]
 
 --Función para los tests del Ej 1
 fRecursiva :: Either Personaje Objeto -> Int
@@ -269,6 +272,7 @@ fRecursiva x = case x of
 {- Usamos fRecursiva para ver que la recursión tanto en objetos como personajes
  - funcione en instancias distintas.
  -}
+
 testsEj1 = test [
   fRecursiva phil -- personaje a secas
   	~=? 0,
@@ -290,27 +294,22 @@ testsEj1 = test [
 
 testsEj2 = test [
   posición_personaje phil
-    ~=? (0,0)
+    ~=? (0,0),
   posición_personaje (Mueve phil Norte)
-    ~=? (0,1)
+    ~=? (0,1),
   posición_personaje (Muere phil)
-    ~=? (0,0)
+    ~=? (0,0),
+  posición_personaje (Muere (Mueve phil Sur))
+    ~=? (0,-1),
   nombre_objeto mjölnir
-    ~=? "Jonathan"
+    ~=? "Jonathan",
   nombre_objeto (Tomado mjölnir phil)
-    ~=? "Jonathan"
+    ~=? "Jonathan",
   nombre_objeto (EsDestruido mjölnir)
-    ~=? "Jonathan"
+    ~=? "Jonathan",
   nombre_objeto (EsDestruido (Tomado mjölnir phil))
     ~=? "Jonathan"
   ]
-{- Test1: Personaje sin moverse.
- - Test2: Personaje movido.
- - Test3: Personaje movido y muerto.
- - Test4: Objeto.
- - Test5: Objeto tomado.
- - Test6: Objeto destruido.
- -}
 
 testsEj3 = test [ -- Casos de test para el ejercicio 3
   objetos_en []       -- Caso de test 1 - expresión a testear
@@ -337,20 +336,22 @@ testsEj5 = test [ -- Casos de test para el ejercicio 5
  - Test3: uni con varios objetos permitidos, hay varios objetos 'más cercanos'
  -}
 
-testsEj6 = test [ -- Casos de test para el ejercicio 6
-  tiene_thanos_todas_las_gemas universo_sin_thanos       -- Caso de test 1 - expresión a testear
-    ~=? False                                            -- Caso de test 1 - resultado esperado
+testsEj6 = test [
+  tiene_thanos_todas_las_gemas universo_sin_thanos
+    ~=? False,
+  tiene_thanos_todas_las_gemas universo_thanos_muerto
+    ~=? False,
+  tiene_thanos_todas_las_gemas universo_thanos_win
+    ~=? True,
+  tiene_thanos_todas_las_gemas universo_gema_rota
+    ~=? False,
+  tiene_thanos_todas_las_gemas universo_faltan_gemas
+    ~=? False
   ]
-{- Test1: uni_sin_thanos ~> False
- - Test2: thanos_muerto ~> False
- - Test3: thanoswin ~> True
- - Test4: thanos_gema_rota ~> False
- - Test5: thanos_sin_tote_gemas ~> False
- -}
 
 testsEj7 = test [ -- Casos de test para el ejercicio 7
-  podemos_ganarle_a_thanos universo_sin_thanos         -- Caso de test 1 - expresión a testear
-    ~=? True,                                       -- Caso de test 1 - resultado esperado
+  podemos_ganarle_a_thanos universo_sin_thanos
+    ~=? True,
   podemos_ganarle_a_thanos universo_thanos_win ~=? False,
   podemos_ganarle_a_thanos universo_thanos_win_dead_thor ~=? False,
   podemos_ganarle_a_thanos universo_thanos_lose1 ~=? True,
