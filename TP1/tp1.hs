@@ -222,15 +222,15 @@ wanda = Personaje (0,0) "Wanda"
 thor = Personaje (4,4) "Thor"
 capitanEmpanada = Personaje (100,100) "Capitan Empanada"
 gabi = Personaje (19,19) "gabi"
+mario = Personaje (1203,3030) "mario"
 
 --Objetos
 mark_12 = Tomado (Objeto (100,100) "Mark 12") iron_man
 lentes = Tomado (Objeto (3,3) "lentes") iron_man
 escudo = Tomado (Objeto (22,2) "escudo") cap
 paleta_dhs = Tomado (Objeto (20,20) "paleta dhs") mario
-mario = Personaje (1203,3030) "mario"
 zapas_joma = Tomado (Objeto (10,2) "zapas_joma") mario
-mjölnir = Objeto (2,2) "Mjölnir"
+mjölnir = Objeto (2,2) "Jonathan"
 empanda_de_carne = Tomado (Objeto (120,102) "empanada de carne") capitanEmpanada
 empanda_de_pollo = Tomado (Objeto (101,101) "empanada de pollo") capitanEmpanada
 empanada_de_humita = Tomado (Objeto (101,103) "empanada de humita") capitanEmpanada
@@ -269,20 +269,40 @@ fRecursiva x = case x of
 {- Usamos fRecursiva para ver que la recursión tanto en objetos como personajes
  - funcione en instancias distintas.
  -}
-testsEj1 = test [ -- Casos de test para el ejercicio 1
-  foldPersonaje (\p s -> 0) (\r d -> r+2) (\r -> r+1) phil             -- Caso de test 1 - expresión a testear
-    ~=? 0                                                               -- Caso de test 1 - resultado esperado
-  ,
-  foldPersonaje (\p s -> 0) (\r d -> r+1) (\r -> r+1) (Muere phil)     -- Caso de test 2 - expresión a testear
-    ~=? 1                                                               -- Caso de test 2 - resultado esperado
+testsEj1 = test [
+  fRecursiva phil -- personaje a secas
+  	~=? 0,
+  fRecursiva (Muere phil) -- personaje muerto
+  	~=? 1,
+  fRecursiva (Mueve phil Norte) -- personaje movido
+  	~=? 2,
+  fRecursiva (Muere (Mueve phil Sur)) -- todos
+  	~=? 3,
+  fRecursiva mjölnir -- objeto a secas
+  	~=? 0,
+  fRecursiva (EsDestruido mjölnir) -- objeto destruido
+  	~=? 1,
+  fRecursiva (Tomado mjölnir phil) -- objeto tomado
+  	~=? 2,
+  fRecursiva (EsDestruido (Tomado mjölnir phil)) -- todos
+  	~=? 3
   ]
-{- aplicamos fRecursiva a 3 casos: personaje, movido movido y muerto.
- - lo mismo con objetos.
- -}
 
-testsEj2 = test [ -- Casos de test para el ejercicio 2
-  posición_personaje phil       -- Caso de test 1 - expresión a testear
-    ~=? (0,0)                   -- Caso de test 1 - resultado esperado
+testsEj2 = test [
+  posición_personaje phil
+    ~=? (0,0)
+  posición_personaje (Mueve phil Norte)
+    ~=? (0,1)
+  posición_personaje (Muere phil)
+    ~=? (0,0)
+  nombre_objeto mjölnir
+    ~=? "Jonathan"
+  nombre_objeto (Tomado mjölnir phil)
+    ~=? "Jonathan"
+  nombre_objeto (EsDestruido mjölnir)
+    ~=? "Jonathan"
+  nombre_objeto (EsDestruido (Tomado mjölnir phil))
+    ~=? "Jonathan"
   ]
 {- Test1: Personaje sin moverse.
  - Test2: Personaje movido.
