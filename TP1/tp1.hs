@@ -128,7 +128,6 @@ posición_personaje = foldPersonaje const siguiente_posición id
 nombre_objeto :: Objeto -> String
 nombre_objeto = foldObjeto (flip const) const id
 
-
 {-Ejercicio 3-}
 
 objetos_en :: Universo -> [Objeto]
@@ -189,7 +188,6 @@ podemos_ganarle_a_thanos u = (not (tiene_thanos_todas_las_gemas u)  &&
   wanda = está_el_personaje "Wanda" u
   vision = está_el_personaje "Vision" u
   gemaDeLaMente = está_el_objeto "Gema de la Mente" u && en_posesión_de "Vision" (objeto_de_nombre "Gema de la Mente" u)
-
 
 {-Tests-}
 main :: IO Counts
@@ -259,23 +257,50 @@ uniPong = universo_con [phil,cap,iron_man,mario,gabi,capitanEmpanada] [mark_12,l
 universoPrueba = [Right (Objeto (2, 3) "obj1"), Right (Objeto (1, 2) "obj2"), Right (Objeto (0, 1) "obj3")]
 personajePrueba = Personaje (0, 0) "personaje1"
 
+--Función para los tests del Ej 1
+fRecursiva :: Either Personaje Objeto -> Int
+fRecursiva x = case x of
+	(Left p) -> foldPersonaje fInit fMid fEnd p
+	(Right o) -> foldObjeto fInit fMid fEnd o
+  where
+	fInit = \_ _ -> 0
+	fMid = \r _ -> r+2
+	fEnd = \r -> r+1
+{- Usamos fRecursiva para ver que la recursión tanto en objetos como personajes
+ - funcione en instancias distintas.
+ -}
 testsEj1 = test [ -- Casos de test para el ejercicio 1
-  foldPersonaje (\p s -> 0) (\r d -> r+1) (\r -> r+1) phil             -- Caso de test 1 - expresión a testear
+  foldPersonaje (\p s -> 0) (\r d -> r+2) (\r -> r+1) phil             -- Caso de test 1 - expresión a testear
     ~=? 0                                                               -- Caso de test 1 - resultado esperado
   ,
   foldPersonaje (\p s -> 0) (\r d -> r+1) (\r -> r+1) (Muere phil)     -- Caso de test 2 - expresión a testear
     ~=? 1                                                               -- Caso de test 2 - resultado esperado
   ]
+{- aplicamos fRecursiva a 3 casos: personaje, movido movido y muerto.
+ - lo mismo con objetos.
+ -}
 
 testsEj2 = test [ -- Casos de test para el ejercicio 2
   posición_personaje phil       -- Caso de test 1 - expresión a testear
     ~=? (0,0)                   -- Caso de test 1 - resultado esperado
   ]
+{- Test1: Personaje sin moverse.
+ - Test2: Personaje movido.
+ - Test3: Personaje movido y muerto.
+ - Test4: Objeto.
+ - Test5: Objeto tomado.
+ - Test6: Objeto destruido.
+ -}
 
 testsEj3 = test [ -- Casos de test para el ejercicio 3
   objetos_en []       -- Caso de test 1 - expresión a testear
     ~=? []            -- Caso de test 1 - resultado esperado
   ]
+{- Test1: universo vacío ~> lista vacía
+ - Test2: uni sin obj/per ~> lista vacía
+ - Test3: uni con obj/per ~> lista de obj/per
+ - TestGracioso: uni_con (obj uni) (per uni) == uni
+ -}
 
 testsEj4 = test [ -- Casos de test para el ejercicio 4
   objetos_en_posesión_de "Phil" []       -- Caso de test 1 - expresión a testear
@@ -286,11 +311,22 @@ testsEj5 = test [ -- Casos de test para el ejercicio 5
   objeto_libre_mas_cercano [Right mjölnir] phil      -- Caso de test 1 - expresión a testear
     ~=? mjölnir                                       -- Caso de test 1 - resultado esperado
   ]
+{- Sugerencias?
+ - Test1: uni con un solo objeto permitido
+ - Test2: uni con varios objetos permitidos, sólo uno está más cerca
+ - Test3: uni con varios objetos permitidos, hay varios objetos 'más cercanos'
+ -}
 
 testsEj6 = test [ -- Casos de test para el ejercicio 6
   tiene_thanos_todas_las_gemas universo_sin_thanos       -- Caso de test 1 - expresión a testear
     ~=? False                                            -- Caso de test 1 - resultado esperado
   ]
+{- Test1: uni_sin_thanos ~> False
+ - Test2: thanos_muerto ~> False
+ - Test3: thanoswin ~> True
+ - Test4: thanos_gema_rota ~> False
+ - Test5: thanos_sin_tote_gemas ~> False
+ -}
 
 testsEj7 = test [ -- Casos de test para el ejercicio 7
   podemos_ganarle_a_thanos universo_sin_thanos         -- Caso de test 1 - expresión a testear
