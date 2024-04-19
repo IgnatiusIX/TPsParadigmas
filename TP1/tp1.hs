@@ -214,6 +214,7 @@ expectAny actual expected = elem actual expected ~? ("Se esperaba cualquiera de:
 
 --Personajes
 phil = Personaje (0,0) "Phil"
+groot = Personaje(1,2) "Groot"
 cap = Personaje (2,1) "cap"
 iron_man = Personaje (10,22) "iron man"
 thanos = Personaje (10,100) "Thanos"
@@ -232,6 +233,9 @@ escudo = Tomado (Objeto (22,2) "escudo") cap
 paleta_dhs = Tomado (Objeto (20,20) "paleta dhs") mario
 zapas_joma = Tomado (Objeto (10,2) "zapas_joma") mario
 mjölnir = Objeto (2,2) "Jonathan"
+ojoDeUatu = Objeto(2,2) "Ojo de Uatu"
+capaDrStrange = Objeto (8, 4) "Capa del Dr Strange"
+tesseract = Objeto (2,18) "Tesseract"
 empanda_de_carne = Tomado (Objeto (120,102) "empanada de carne") capitanEmpanada
 empanda_de_pollo = Tomado (Objeto (101,101) "empanada de pollo") capitanEmpanada
 empanada_de_humita = Tomado (Objeto (101,103) "empanada de humita") capitanEmpanada
@@ -249,6 +253,8 @@ gema_del_poder = Tomado (Objeto (0,0) "Gema del Poder") thanos
 --Universos
 universoPrueba = [Right (Objeto (2, 3) "obj1"), Right (Objeto (1, 2) "obj2"), Right (Objeto (0, 1) "obj3")]
 uniPong = universo_con [phil,cap,iron_man,mario,gabi,capitanEmpanada] [mark_12,lentes,escudo,paleta_dhs,zapas_joma,microfono,empanda_de_carne]
+universo_obj_libres_unico = [phil, thor, cap] [tesseract, ojoDeUatu, escudo, capaDrStrange, stormBreaker]
+universo_obj_libres_dos = [groot, thor, cap] [tesseract, ojoDeUatu, escudo, capaDrStrange, stormBreaker, mjölnir]
 
 --Universos relacionados a Thanos
 universo_sin_thanos = universo_con [phil] [mjölnir]
@@ -328,9 +334,13 @@ testsEj4 = test [ -- Casos de test para el ejercicio 4
 
 testsEj5 = test [ -- Casos de test para el ejercicio 5
   objeto_libre_mas_cercano [Right mjölnir] phil      -- Caso de test 1 - expresión a testear
-    ~=? mjölnir                                       -- Caso de test 1 - resultado esperado
+    ~=? mjölnir,                                     -- Caso de test 1 - resultado esperado
+  objeto_libre_mas_cercano universo_obj_libres_unico phil    -- Caso de test 2 - expresión a testear
+    ~=? mjölnir,					     -- Caso de test 2 - resultado esperado
+  objeto_libre_mas_cercano universo_obj_libres_dos phil      -- Caso de test 3 - expresión a testear
+    ~=? mjölnir						     -- Caso de test 3 - resultado esperado
   ]
-{- Sugerencias?
+{-
  - Test1: uni con un solo objeto permitido
  - Test2: uni con varios objetos permitidos, sólo uno está más cerca
  - Test3: uni con varios objetos permitidos, hay varios objetos 'más cercanos'
