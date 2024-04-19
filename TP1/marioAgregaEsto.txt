@@ -1,0 +1,169 @@
+{-Tests-}
+main :: IO Counts
+main = do runTestTT allTests
+
+allTests = test [ -- Reemplazar los tests de prueba por tests propios
+  "ejercicio1" ~: testsEj1,
+  "ejercicio2" ~: testsEj2,
+  "ejercicio3" ~: testsEj3,
+  "ejercicio4" ~: testsEj4,
+  "ejercicio5" ~: testsEj5,
+  "ejercicio6" ~: testsEj6,
+  "ejercicio7" ~: testsEj7
+  ]
+
+--Personajes
+phil = Personaje (0,0) "Phil"
+groot = Personaje(1,2) "Groot"
+cap = Personaje (2,1) "cap"
+iron_man = Personaje (10,22) "iron man"
+thanos = Personaje (10,100) "Thanos"
+vision = Mueve (Personaje (20,20) "Vision") Norte
+wanda = Personaje (0,0) "Wanda"
+thor = Personaje (4,4) "Thor"
+capitanEmpanada = Personaje (100,100) "Capitan Empanada"
+gabi = Personaje (19,19) "gabi"
+mario = Personaje (1203,3030) "mario"
+personajePrueba = Personaje (0, 0) "personaje1"
+
+--Objetos
+mark_12 = Tomado (Objeto (100,100) "Mark 12") iron_man
+lentes = Tomado (Objeto (3,3) "lentes") iron_man
+escudo = Tomado (Objeto (22,2) "escudo") cap
+paleta_dhs = Tomado (Objeto (20,20) "paleta dhs") mario
+zapas_joma = Tomado (Objeto (10,2) "zapas_joma") mario
+mjölnir = Objeto (2,2) "Jonathan"
+ojoDeUatu = Objeto(2,2) "Ojo de Uatu"
+capaDrStrange = Objeto (8, 4) "Capa del Dr Strange"
+tesseract = Objeto (2,18) "Tesseract"
+empanda_de_carne = Tomado (Objeto (120,102) "empanada de carne") capitanEmpanada
+empanda_de_pollo = Tomado (Objeto (101,101) "empanada de pollo") capitanEmpanada
+empanada_de_humita = Tomado (Objeto (101,103) "empanada de humita") capitanEmpanada
+microfono = Tomado (Objeto (19,20) "microfono") gabi
+stormBreaker = Tomado (Objeto (4,4) "StormBreaker") thor
+gema_de_la_empanada = Objeto (1010,2020) "Gema de la Empanada"
+gema_de_la_menteVision = Tomado (Objeto (0,0) "Gema de la Mente") vision
+gema_de_la_menteThanos = Tomado (Objeto (0,0) "Gema de la Mente") thanos
+gema_del_tiempo = Tomado (Objeto (0,0) "Gema del Tiempo") thanos
+gema_del_espacio = Tomado (Objeto (0,0) "Gema del Espacio") thanos
+gema_del_alma = Tomado (Objeto (0,0) "Gema del Alma") thanos 
+gema_de_la_realidad = Tomado (Objeto (0,0) "Gema de la Realidad") thanos
+gema_del_poder = Tomado (Objeto (0,0) "Gema del Poder") thanos
+
+--Universos
+universoPrueba = [Right (Objeto (2, 3) "obj1"), Right (Objeto (1, 2) "obj2"), Right (Objeto (0, 1) "obj3")]
+uniPong = universo_con [phil,cap,iron_man,mario,gabi,capitanEmpanada] [mark_12,lentes,escudo,paleta_dhs,zapas_joma,microfono,empanda_de_carne]
+universo_obj_libres_unico = universo_con [phil, thor, cap, groot] [tesseract, ojoDeUatu, escudo, capaDrStrange, stormBreaker]
+universo_obj_libres_dos = universo_con [groot, thor, cap, groot] [tesseract, ojoDeUatu, escudo, capaDrStrange, stormBreaker, mjölnir]
+universo_obj_libres_y_tomados = universo_con [groot] [gema_del_poder, tesseract]
+
+--Universos relacionados a Thanos
+universo_sin_thanos = universo_con [phil] [mjölnir]
+universo_thanos_win = universo_con [thanos, thor] [stormBreaker, gema_de_la_menteThanos, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, gema_del_tiempo]
+universo_thanos_win_dead_thor = universo_con [thanos,(Muere thor), vision] [stormBreaker, gema_de_la_menteVision, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, gema_del_tiempo]
+universo_thanos_lose1 = universo_con [thanos, thor, vision] [stormBreaker, gema_de_la_menteVision, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, gema_del_tiempo]
+universo_thanos_lose2 = universo_con [thanos, wanda, vision] [gema_de_la_menteVision, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, gema_del_tiempo]
+universo_gema_rota = universo_con [thor, phil, vision, thanos] [(Tomado empanada_de_humita thanos),gema_de_la_menteThanos, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, (EsDestruido gema_del_tiempo), (Tomado mjölnir thanos)]
+universo_faltan_gemas = universo_con [thor, phil, vision, thanos] [(Tomado empanada_de_humita thanos),gema_de_la_menteThanos, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, (Tomado mjölnir thanos)]
+universo_thanos_muerto = universo_con [(Muere thanos), thor] [stormBreaker, gema_de_la_menteThanos, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, gema_del_tiempo]
+
+--Función para los tests del Ej 1
+fRecursiva :: Either Personaje Objeto -> Int
+fRecursiva x = case x of
+	(Left p) -> foldPersonaje fInit fMid fEnd p
+	(Right o) -> foldObjeto fInit fMid fEnd o
+  where
+	fInit = \_ _ -> 0
+	fMid = \r _ -> r+2
+	fEnd = \r -> r+1
+{- Usamos fRecursiva para ver que la recursión tanto en objetos como personajes
+ - funcione en instancias distintas.
+ -}
+
+testsEj1 = test [ -- Casos de test para el ejercicio 1
+  fRecursiva (Left phil) -- personaje a secas
+  	~=? 0,
+  fRecursiva (Left(Muere phil)) -- personaje muerto
+  	~=? 1,
+  fRecursiva (Left (Mueve phil Norte)) -- personaje movido
+  	~=? 2,
+  fRecursiva (Left (Muere (Mueve phil Sur))) -- todos
+  	~=? 3,
+  fRecursiva (Right mjölnir) -- objeto a secas
+  	~=? 0,
+  fRecursiva (Right (EsDestruido mjölnir)) -- objeto destruido
+  	~=? 1,
+  fRecursiva (Right (Tomado mjölnir phil)) -- objeto tomado
+  	~=? 2,
+  fRecursiva (Right (EsDestruido (Tomado mjölnir phil))) -- todos
+  	~=? 3
+  ]
+
+testsEj2 = test [ -- Casos de test para el ejercicio 2
+  posición_personaje phil
+    ~=? (0,0),
+  posición_personaje (Mueve phil Norte)
+    ~=? (0,1),
+  posición_personaje (Muere phil)
+    ~=? (0,0),
+  posición_personaje (Muere (Mueve phil Sur))
+    ~=? (0,-1),
+  nombre_objeto mjölnir
+    ~=? "Jonathan",
+  nombre_objeto (Tomado mjölnir phil)
+    ~=? "Jonathan",
+  nombre_objeto (EsDestruido mjölnir)
+    ~=? "Jonathan",
+  nombre_objeto (EsDestruido (Tomado mjölnir phil))
+    ~=? "Jonathan"
+  ]
+
+testsEj3 = test [ -- Casos de test para el ejercicio 3
+  objetos_en []      
+    ~=? [],           
+  objetos_en [Left gabi, Left thanos, Left thor, Left iron_man]  ~=? [],
+  objetos_en [Right empanada_de_humita, Right empanda_de_carne, Right empanda_de_pollo] ~=? [empanada_de_humita, empanda_de_carne, empanda_de_pollo],
+  objetos_en uniPong ~=? [mark_12,lentes,escudo,paleta_dhs,zapas_joma,microfono,empanda_de_carne],
+
+  personajes_en [] ~=? [],
+  personajes_en [Left gabi, Left thanos, Left thor, Left iron_man]  ~=? [gabi, thanos, thor, iron_man],
+  personajes_en [Right empanada_de_humita, Right empanda_de_carne, Right empanda_de_pollo] ~=? [],
+  personajes_en uniPong ~=? [phil,cap,iron_man,mario,gabi,capitanEmpanada]
+  ]
+
+testsEj4 = test [ -- Casos de test para el ejercicio 4
+  objetos_en_posesión_de "Phil" []      
+    ~=? []                           
+  ]
+
+testsEj5 = test [ -- Casos de test para el ejercicio 5
+  objeto_libre_mas_cercano [Right mjölnir, Left phil] phil     
+    ~=? mjölnir,                                    
+  objeto_libre_mas_cercano universo_obj_libres_unico groot   
+    ~=? ojoDeUatu,					    
+  objeto_libre_mas_cercano universo_obj_libres_dos groot      
+    ~=? ojoDeUatu,					   
+    objeto_libre_mas_cercano universo_obj_libres_y_tomados groot ~=? tesseract
+  ]
+
+testsEj6 = test [ -- Casos de test para el ejercicio 6
+  tiene_thanos_todas_las_gemas universo_sin_thanos
+    ~=? False,
+  tiene_thanos_todas_las_gemas universo_thanos_muerto
+    ~=? False,
+  tiene_thanos_todas_las_gemas universo_thanos_win
+    ~=? True,
+  tiene_thanos_todas_las_gemas universo_gema_rota
+    ~=? False,
+  tiene_thanos_todas_las_gemas universo_faltan_gemas
+    ~=? False
+  ]
+
+testsEj7 = test [ -- Casos de test para el ejercicio 7
+  podemos_ganarle_a_thanos universo_sin_thanos
+    ~=? True,
+  podemos_ganarle_a_thanos universo_thanos_win ~=? False,
+  podemos_ganarle_a_thanos universo_thanos_win_dead_thor ~=? False,
+  podemos_ganarle_a_thanos universo_thanos_lose1 ~=? True,
+  podemos_ganarle_a_thanos universo_thanos_lose2 ~=? True
+  ]
