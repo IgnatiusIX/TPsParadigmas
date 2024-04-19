@@ -225,6 +225,8 @@ capitanEmpanada = Personaje (100,100) "Capitan Empanada"
 gabi = Personaje (19,19) "gabi"
 mario = Personaje (1203,3030) "mario"
 personajePrueba = Personaje (0, 0) "personaje1"
+joaco = Mueve (Personaje (777,777) "joaco") Norte
+pepe_rip = Muere (Personaje (1919293,929393) "pepe")
 
 --Objetos
 mark_12 = Tomado (Objeto (100,100) "Mark 12") iron_man
@@ -249,6 +251,16 @@ gema_del_espacio = Tomado (Objeto (0,0) "Gema del Espacio") thanos
 gema_del_alma = Tomado (Objeto (0,0) "Gema del Alma") thanos 
 gema_de_la_realidad = Tomado (Objeto (0,0) "Gema de la Realidad") thanos
 gema_del_poder = Tomado (Objeto (0,0) "Gema del Poder") thanos
+mesa_ping_pong = Tomado (Objeto (1000,1000) "mesa de ping pong") mario
+pelotita_donic = Tomado (Objeto (10000,10000) "pelotita donic") mario
+paleta_sensei = Tomado (Objeto (159,159) "paleta sensei 4 estrellas") mario
+mesa_c25 = Tomado (Objeto (100000,100000) "MESA ALMAR C5") mario
+hurricane_3 = Tomado (Objeto (1000,10000) "hurricane 3") mario
+short = Tomado (Objeto (392,201) "short") joaco
+escudo_destruido = EsDestruido escudo
+mascara = EsDestruido (Objeto (1919,3493) "mascara")
+pepometro = Tomado (Objeto(666,666) "PEPOMETRO") pepe_rip
+tiempo = Tomado (Objeto (-1000000,999999) "tiempo") pepe_rip
 
 --Universos
 universoPrueba = [Right (Objeto (2, 3) "obj1"), Right (Objeto (1, 2) "obj2"), Right (Objeto (0, 1) "obj3")]
@@ -265,6 +277,11 @@ universo_thanos_lose2 = universo_con [thanos, wanda, vision] [gema_de_la_menteVi
 universo_gema_rota = universo_con [thor, phil, vision, thanos] [(Tomado empanada_de_humita thanos),gema_de_la_menteThanos, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, (EsDestruido gema_del_tiempo), (Tomado mjölnir thanos)]
 universo_faltan_gemas = universo_con [thor, phil, vision, thanos] [(Tomado empanada_de_humita thanos),gema_de_la_menteThanos, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, (Tomado mjölnir thanos)]
 universo_thanos_muerto = universo_con [(Muerto thanos), thor] [stormBreaker, gema_de_la_menteThanos, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, gema_del_tiempo]
+full_ping_pong = universo_con [mario,iron_man,joaco,gabi,thor, capitanEmpanada, thanos] 
+                              [hurricane_3, paleta_dhs, mesa_c25, pelotita_donic, mesa_ping_pong, paleta_sensei,zapas_joma]
+universo_sin_empanadas = universo_con [capitanEmpanada, joaco, mario] [hurricane_3,short,mesa_c25]
+universo_cosas_rotas = universo_con [cap,joaco, capitanEmpanada] [mascara, escudo, empanada_de_humita, short,escudo_destruido, empanda_de_carne]
+uni_rip_pepe = universo_con [iron_man, pepe_rip, mario, capitanEmpanada] [lentes, pepometro, paleta_dhs, empanada_de_humita, mark_12, tiempo]
 
 --Función para los tests del Ej 1
 fRecursiva :: Either Personaje Objeto -> Int
