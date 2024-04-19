@@ -19,6 +19,26 @@ data Objeto = Objeto Posición String        -- posición inicial, nombre
   deriving (Eq, Show)
 type Universo = [Either Personaje Objeto]
 
+{- CONSIDERACIONES -}
+{- Todas las funciones que reciban un universo tienen como requiere que el universo sea valido. A continuación, se define:
+  Personaje válido:
+    - Si el personaje muere, no puede moverse.
+  Objeto válido:
+    - un objeto destruido no puede ser tomado
+    - un objeto no puede ser tomado por un personaje muerto
+    - un objeto solo puede ser tomado por un personaje de su universo
+  Universo válido:
+    - No contiene objetos con nombre repetidos (el string del constructor es único, y no hay dos objetos con esto igual)
+    - No contiene personajes con nombres repetidos (misma aclaracion que punto anterior)
+    - los personajes y objetos de un universo válido, son válidos
+    - la relación entre objetos y personanje cumple lo dicho abajo (en aclaraciones)
+  Relacion entre Objetos y Personajes (aclaraciones)
+    - Un personaje muerto mantiene sus objetos tomados
+    - Un objeto libre que es destruido no puede se le puede aplicar ningún otro constructor
+  Thanos
+    - Si thanos está muerto, se gana
+-}
+
 {-- Observadores y funciones básicas de los tipos --}
 
 siguiente_posición :: Posición -> Dirección -> Posición
