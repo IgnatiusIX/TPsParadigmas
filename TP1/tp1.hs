@@ -223,15 +223,6 @@ allTests = test [ -- Reemplazar los tests de prueba por tests propios
   "ejercicio7" ~: testsEj7
   ]
 
-expectAny :: a -> [a] -> Bool
-expectAny actual expected = elem actual expected ~? ("Se esperaba cualquiera de: " ++ show expected ++ "\n pero se recibió: " ++ show actual)
-{- expectAny toma el resultado de aplicar la función y una lista de posibles soluciones al caso de test.
- - 
- - expectAny se usa en los casos de test donde puede haber "empates" y la solución puede ser cualquiera de
- - los "expected". 
- - Esta función se la acreditamos a la cátedra de IP.
- -}
-
 --Personajes
 phil = Personaje (0,0) "Phil"
 groot = Personaje(1,2) "Groot"
@@ -285,8 +276,13 @@ tiempo = Tomado (Objeto (-1000000,999999) "tiempo") pepe_rip
 --Universos
 universoPrueba = [Right (Objeto (2, 3) "obj1"), Right (Objeto (1, 2) "obj2"), Right (Objeto (0, 1) "obj3")]
 uniPong = universo_con [phil,cap,iron_man,mario,gabi,capitanEmpanada] [mark_12,lentes,escudo,paleta_dhs,zapas_joma,microfono,empanda_de_carne]
-universo_obj_libres_unico = [phil, thor, cap] [tesseract, ojoDeUatu, escudo, capaDrStrange, stormBreaker]
-universo_obj_libres_dos = [groot, thor, cap] [tesseract, ojoDeUatu, escudo, capaDrStrange, stormBreaker, mjölnir]
+universo_obj_libres_unico = universo_con [phil, thor, cap, groot] [tesseract, ojoDeUatu, escudo, capaDrStrange, stormBreaker]
+universo_obj_libres_dos = universo_con [groot, thor, cap, groot] [tesseract, ojoDeUatu, escudo, capaDrStrange, stormBreaker, mjölnir]
+universo_obj_libres_y_tomados = universo_con [groot] [gema_del_poder, tesseract]
+full_ping_pong = universo_con [mario,iron_man,joaco,gabi,thor, capitanEmpanada, thanos] [hurricane_3, paleta_dhs, mesa_c25, pelotita_donic, mesa_ping_pong, paleta_sensei,zapas_joma]
+universo_sin_empanadas = universo_con [capitanEmpanada, joaco, mario] [hurricane_3,short,mesa_c25]
+universo_cosas_rotas = universo_con [cap,joaco, capitanEmpanada] [mascara, escudo, empanada_de_humita, short,escudo_destruido, empanda_de_carne]
+uni_rip_pepe = universo_con [iron_man, pepe_rip, mario, capitanEmpanada] [lentes, pepometro, paleta_dhs, empanada_de_humita, mark_12, tiempo]
 
 --Universos relacionados a Thanos
 universo_sin_thanos = universo_con [phil] [mjölnir]
@@ -296,12 +292,7 @@ universo_thanos_lose1 = universo_con [thanos, thor, vision] [stormBreaker, gema_
 universo_thanos_lose2 = universo_con [thanos, wanda, vision] [gema_de_la_menteVision, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, gema_del_tiempo]
 universo_gema_rota = universo_con [thor, phil, vision, thanos] [(Tomado empanada_de_humita thanos),gema_de_la_menteThanos, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, (EsDestruido gema_del_tiempo), (Tomado mjölnir thanos)]
 universo_faltan_gemas = universo_con [thor, phil, vision, thanos] [(Tomado empanada_de_humita thanos),gema_de_la_menteThanos, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, (Tomado mjölnir thanos)]
-universo_thanos_muerto = universo_con [(Muerto thanos), thor] [stormBreaker, gema_de_la_menteThanos, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, gema_del_tiempo]
-full_ping_pong = universo_con [mario,iron_man,joaco,gabi,thor, capitanEmpanada, thanos] 
-                              [hurricane_3, paleta_dhs, mesa_c25, pelotita_donic, mesa_ping_pong, paleta_sensei,zapas_joma]
-universo_sin_empanadas = universo_con [capitanEmpanada, joaco, mario] [hurricane_3,short,mesa_c25]
-universo_cosas_rotas = universo_con [cap,joaco, capitanEmpanada] [mascara, escudo, empanada_de_humita, short,escudo_destruido, empanda_de_carne]
-uni_rip_pepe = universo_con [iron_man, pepe_rip, mario, capitanEmpanada] [lentes, pepometro, paleta_dhs, empanada_de_humita, mark_12, tiempo]
+universo_thanos_muerto = universo_con [(Muere thanos), thor] [stormBreaker, gema_de_la_menteThanos, gema_de_la_realidad, gema_del_alma, gema_del_espacio, gema_del_poder, gema_del_tiempo]
 
 --Función para los tests del Ej 1
 fRecursiva :: Either Personaje Objeto -> Int
@@ -316,26 +307,26 @@ fRecursiva x = case x of
  - funcione en instancias distintas.
  -}
 
-testsEj1 = test [
-  fRecursiva phil -- personaje a secas
+testsEj1 = test [ -- Casos de test para el ejercicio 1
+  fRecursiva (Left phil) -- personaje a secas
   	~=? 0,
-  fRecursiva (Muere phil) -- personaje muerto
+  fRecursiva (Left(Muere phil)) -- personaje muerto
   	~=? 1,
-  fRecursiva (Mueve phil Norte) -- personaje movido
+  fRecursiva (Left (Mueve phil Norte)) -- personaje movido
   	~=? 2,
-  fRecursiva (Muere (Mueve phil Sur)) -- todos
+  fRecursiva (Left (Muere (Mueve phil Sur))) -- todos
   	~=? 3,
-  fRecursiva mjölnir -- objeto a secas
+  fRecursiva (Right mjölnir) -- objeto a secas
   	~=? 0,
-  fRecursiva (EsDestruido mjölnir) -- objeto destruido
+  fRecursiva (Right (EsDestruido mjölnir)) -- objeto destruido
   	~=? 1,
-  fRecursiva (Tomado mjölnir phil) -- objeto tomado
+  fRecursiva (Right (Tomado mjölnir phil)) -- objeto tomado
   	~=? 2,
-  fRecursiva (EsDestruido (Tomado mjölnir phil)) -- todos
+  fRecursiva (Right (EsDestruido (Tomado mjölnir phil))) -- todos
   	~=? 3
   ]
 
-testsEj2 = test [
+testsEj2 = test [ -- Casos de test para el ejercicio 2
   posición_personaje phil
     ~=? (0,0),
   posición_personaje (Mueve phil Norte)
@@ -355,14 +346,17 @@ testsEj2 = test [
   ]
 
 testsEj3 = test [ -- Casos de test para el ejercicio 3
-  objetos_en []       -- Caso de test 1 - expresión a testear
-    ~=? []            -- Caso de test 1 - resultado esperado
+  objetos_en []      
+    ~=? [],           
+  objetos_en [Left gabi, Left thanos, Left thor, Left iron_man]  ~=? [],
+  objetos_en [Right empanada_de_humita, Right empanda_de_carne, Right empanda_de_pollo] ~=? [empanada_de_humita, empanda_de_carne, empanda_de_pollo],
+  objetos_en uniPong ~=? [mark_12,lentes,escudo,paleta_dhs,zapas_joma,microfono,empanda_de_carne],
+
+  personajes_en [] ~=? [],
+  personajes_en [Left gabi, Left thanos, Left thor, Left iron_man]  ~=? [gabi, thanos, thor, iron_man],
+  personajes_en [Right empanada_de_humita, Right empanda_de_carne, Right empanda_de_pollo] ~=? [],
+  personajes_en uniPong ~=? [phil,cap,iron_man,mario,gabi,capitanEmpanada]
   ]
-{- Test1: universo vacío ~> lista vacía
- - Test2: uni sin obj/per ~> lista vacía
- - Test3: uni con obj/per ~> lista de obj/per
- - TestGracioso: uni_con (obj uni) (per uni) == uni
- -}
 
 testsEj4 = test [ -- Casos de test para el ejercicio 4
   objetos_en_posesión_de "mario" uniPong       -- Caso de test 1 - personaje con objetos en el universo y otros objetos
@@ -386,20 +380,16 @@ testsEj4 = test [ -- Casos de test para el ejercicio 4
   ]
 
 testsEj5 = test [ -- Casos de test para el ejercicio 5
-  objeto_libre_mas_cercano [Right mjölnir] phil      -- Caso de test 1 - expresión a testear
-    ~=? mjölnir,                                     -- Caso de test 1 - resultado esperado
-  objeto_libre_mas_cercano universo_obj_libres_unico phil    -- Caso de test 2 - expresión a testear
-    ~=? mjölnir,					     -- Caso de test 2 - resultado esperado
-  objeto_libre_mas_cercano universo_obj_libres_dos phil      -- Caso de test 3 - expresión a testear
-    ~=? mjölnir						     -- Caso de test 3 - resultado esperado
+  objeto_libre_mas_cercano [Right mjölnir, Left phil] phil     
+    ~=? mjölnir,                                    
+  objeto_libre_mas_cercano universo_obj_libres_unico groot   
+    ~=? ojoDeUatu,					    
+  objeto_libre_mas_cercano universo_obj_libres_dos groot      
+    ~=? ojoDeUatu,					   
+    objeto_libre_mas_cercano universo_obj_libres_y_tomados groot ~=? tesseract
   ]
-{-
- - Test1: uni con un solo objeto permitido
- - Test2: uni con varios objetos permitidos, sólo uno está más cerca
- - Test3: uni con varios objetos permitidos, hay varios objetos 'más cercanos'
- -}
 
-testsEj6 = test [
+testsEj6 = test [ -- Casos de test para el ejercicio 6
   tiene_thanos_todas_las_gemas universo_sin_thanos
     ~=? False,
   tiene_thanos_todas_las_gemas universo_thanos_muerto
