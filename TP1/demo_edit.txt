@@ -38,10 +38,12 @@ Caso Inductivo {
 
 		elem o (foldr (\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) [] (u:us)) 
 			⇒ elem (Right o) (u:us)
-		por regle beta:
-		elem o ((\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) u foldr (\elem rec -> if es_un_objeto 			elem then objeto_de elem : rec else rec) [] us)
+		
+		elem o ((\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) u objetos_en us)
 			⇒ elem (Right o) (u:us)
-		por principio de reemplazo 
+		
+		Por regla Beta
+
 		elem o (if es_un_objeto u then objeto_de u:objetos_en us else objetos_en us) ⇒ elem (Right o) (u:us)
 		
 	Por extensionabilidad de booleano es_un_objeto u es igual a True o False, luego tenemos dos casos:
@@ -52,9 +54,9 @@ Caso Inductivo {
 
 			elem o (objetos_en us) ⇒ (Right o) == u || elem (Right o) us
 
-!!		Como u no es del tipo 'Right x', con x :: Objeto,
-!!		por cómo funciona la igualdad entre objetos de
-!!		tipo Either A B, sabemos que '(Right o) == u' es falso. Luego,
+		Como u no es del tipo 'Right x', con x :: Objeto,
+		por cómo funciona la igualdad entre objetos de
+		tipo Either A B, sabemos que '(Right o) == u' es falso. Luego,
 
 			elem o (objetos_en us) ⇒ False || elem (Right o) us
 
