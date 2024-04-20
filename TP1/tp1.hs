@@ -20,7 +20,7 @@ data Objeto = Objeto Posición String        -- posición inicial, nombre
 type Universo = [Either Personaje Objeto]
 
 {- CONSIDERACIONES -}
-{- Todas las funciones que reciban un universo tienen como requiere que el universo sea valido. A continuación, se define:
+{- A continuación se definen requeriemientos para que una entrada sea válida de acuerdo a su tipo:
   Personaje válido:
     - Si el personaje muere, no puede moverse.
   Objeto válido:
