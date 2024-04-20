@@ -86,7 +86,8 @@ Caso Inductivo {
 
 			o == x || elem o (objetos_de us) ⇒ (Right o) == (Right x) || elem (Right o) us
 		
-		Por extensionabilidad de booleano x == o es True o False:
+		Por extensionabilidad de booleano x == o es True o False
+        
 		Si x == o {
 
 			o == x || elem o (objetos_de us) ⇒ (Right o) == (Right x) || elem (Right o) us
