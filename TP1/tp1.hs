@@ -361,7 +361,7 @@ testsEj3 = test [ -- Casos de test para el ejercicio 3
 testsEj4 = test [ -- Casos de test para el ejercicio 4
   objetos_en_posesión_de "mario" uniPong       -- Caso de test 1 - personaje con objetos en el universo y otros objetos
     ~=? [Tomado (Objeto (20.0,20.0) "paleta dhs") (Personaje (1203.0,3030.0) "mario"),
-         Tomado (Objeto (10.0,2.0) "zapas_joma") (Personaje (1203.0,3030.0) "mario")],                         -- Caso de test 1 - resultado esperado
+         Tomado (Objeto (10.0,2.0) "zapas_joma") (Personaje (1203.0,3030.0) "mario")],    
   objetos_en_posesión_de "mario" full_ping_pong --podria ir todos los objetos del universo
     ~=? [Tomado (Objeto (1000.0,10000.0) "hurricane 3") (Personaje (1203.0,3030.0) "mario"),
          Tomado (Objeto (20.0,20.0) "paleta dhs") (Personaje (1203.0,3030.0) "mario"),
@@ -373,7 +373,7 @@ testsEj4 = test [ -- Casos de test para el ejercicio 4
   objetos_en_posesión_de "Capitan Empanada" universo_sin_empanadas
     ~=? [],
   objetos_en_posesión_de "cap" universo_cosas_rotas
-    ~=? [],
+    ~=? [escudo],
   objetos_en_posesión_de "pepe" uni_rip_pepe
   ~=?  [Tomado (Objeto (666.0,666.0) "PEPOMETRO") (Muere (Personaje (1919293.0,929393.0) "pepe")),
         Tomado (Objeto (-1000000.0,999999.0) "tiempo") (Muere (Personaje (1919293.0,929393.0) "pepe"))] 
