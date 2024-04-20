@@ -1,97 +1,118 @@
 ∀ us :: Universo . ∀ o :: Objeto . elem o (objetos_en us) ⇒ elem (Right o) us
 
-Vamos a probar esto por inducción sobre us
+Vamos a probar esto por inducción sobre us.
 
-Queremos probar 
+Queremos probar
 
-                P(us) ⇒ P(u:us)
+	P(us) ⇒ P(u:us)
 
-                P(us) = HI = elem o (objetos_en us) ⇒ elem (Right o) us
-
-Caso Base
-
-            us = []
-
-            P([])
-
-            elem o (objetos_en []) ⇒ elem (Right o) []
-
-            elem o [] ⇒ elem (Right o) []
-
-            False ⇒ _ 
-
-            True
-
-Caso Inductivo
-
-            us = (u:us)
-
-            P(u:us)
-
-                elem o (objetos_en (u:us)) ⇒ elem (Right o) (u:us)
-
-                elem o (filterMap es_un_objeto objeto_de (u:us)) ⇒ elem (Right o) (u:us)
-
-                elem o (foldr (\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) [] (u:us)) ⇒ elem (Right o) (u:us)
-
-            Caso donde es_un_objeto u == False
-
-            Desarrollando nos queda algo de esta pinta (pasamos el foldr devuelta en la funcion original para mayor legibilidad)
-
-                elem o (objetos_en us) ⇒ (Right o) == u || elem (Right o) us
-
-            Como u no es del tipo Right x, x:: Objeto
-            Entonces (Right o) == u = False
-
-                elem o (objetos_en us) ⇒ False || elem (Right o) us
-
-                elem o (objetos_en us) ⇒ elem (Right o) us
-
-                Por HI
-
-                    True
-
-            Caso donde es_un_objeto u == True
-
-            Desarrollando nos queda algo de esta pinta
-
-                elem o ((objetos_de u) : objetos_en us) ⇒ (Right o) == u || elem (Right o) us
-
-                o == (objeto_de u) || elem o (objetos_de us) ⇒ (Right o) == u || elem (Right o) us
+	P(us) = HI = elem o (objetos_en us) ⇒ elem (Right o) us
 
 
-            Tomamos u = (Right x), ∀x::Objeto
+Caso Base {
 
-            Entonces 
+	us = []
 
-                objeto_de u = objeto_de (Right x) = x
+	P([])
 
-            Por lo que reemplazando quedaria
+	elem o (objetos_en []) ⇒ elem (Right o) []
 
-                o == x || elem o (objetos_de us) ⇒ (Right o) == (Right x) || elem (Right o) us
+	elem o [] ⇒ elem (Right o) []
 
-                Ahora si x = o 
+	False ⇒ _ 
 
-                    o == x || elem o (objetos_de us) ⇒ (Right o) == (Right x) || elem (Right o) us
+	True
 
-                    o == o || elem o (objetos_de us) ⇒ (Right o) == (Right o) || elem (Right o) us
+}
 
-                    True || elem o (objetos_de us) ⇒ True || elem (Right o) us
+Caso Inductivo {
 
-                    True || _ ⇒ True || _ 
-                         
-                    True ⇒ True
+	Asumimos P(us) verdad.
+	us = (u:us), con u :: Either Personaje Objeto
 
-                    True
+	Desarrollamos P(u:us):
 
-                Ahora si x != o 
+		elem o (objetos_en (u:us)) ⇒ elem (Right o) (u:us) 
 
-                    o == x || elem o (objetos_de us) ⇒ (Right o) == (Right x) || elem (Right o) us
+		elem o (filterMap es_un_objeto objeto_de (u:us)) ⇒ elem (Right o) (u:us) 
 
-                    False || elem o (objetos_de us) ⇒ False || elem (Right o) us
+		elem o (foldr (\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) [] (u:us)) 
+			⇒ elem (Right o) (u:us)
+		
+		elem o ((\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) u objetos_en us)
+			⇒ elem (Right o) (u:us)
+		
+		Por regla Beta
 
-                    elem o (objetos_de us) ⇒ elem (Right o) us
+		elem o (if es_un_objeto u then objeto_de u:objetos_en us else objetos_en us) ⇒ elem (Right o) (u:us)
+		
+	Por extensionabilidad de booleano es_un_objeto u es igual a True o False, luego tenemos dos casos:
+		
+	- Caso donde 'es_un_objeto u' es falso - {
 
-                    Por HI
+		Desarrollando aún más nos queda algo de la forma:
 
-                        True
+			elem o (objetos_en us) ⇒ (Right o) == u || elem (Right o) us
+
+		Como u no es del tipo 'Right x', con x :: Objeto,
+		por cómo funciona la igualdad entre objetos de
+		tipo Either A B, sabemos que '(Right o) == u' es falso. Luego,
+
+			elem o (objetos_en us) ⇒ False || elem (Right o) us
+
+			elem o (objetos_en us) ⇒ elem (Right o) us
+
+			Por HI
+
+				True
+
+	}
+
+	- Caso donde 'es_un_objeto u' es verdad - {
+
+		Desarrollando aún más nos queda algo de la forma:
+
+			elem o ((objetos_de u) : objetos_en us) ⇒ (Right o) == u || elem (Right o) us
+
+			o == (objeto_de u) || elem o (objetos_de us) ⇒ (Right o) == u || elem (Right o) us
+
+		Tomamos u = (Right x), para algún x :: Objeto
+
+		Entonces 
+
+			objeto_de u = objeto_de (Right x) = x
+
+		Por lo que reemplazando quedaria
+
+			o == x || elem o (objetos_de us) ⇒ (Right o) == (Right x) || elem (Right o) us
+		
+		Por extensionabilidad de booleano x == o es True o False:
+		Si x == o {
+
+			o == x || elem o (objetos_de us) ⇒ (Right o) == (Right x) || elem (Right o) us
+
+			o == o || elem o (objetos_de us) ⇒ (Right o) == (Right o) || elem (Right o) us
+
+			True || elem o (objetos_de us) ⇒ True || elem (Right o) us
+
+			True || _ ⇒ True || _ 
+				 
+			True ⇒ True
+
+			True
+
+		} Ahora si x != o {
+
+			o == x || elem o (objetos_de us) ⇒ (Right o) == (Right x) || elem (Right o) us
+
+			False || elem o (objetos_de us) ⇒ False || elem (Right o) us
+
+			elem o (objetos_de us) ⇒ elem (Right o) us
+
+			Por HI
+
+				True
+
+		}
+	}
+}
