@@ -172,6 +172,10 @@ filterMap f g = foldr (\elem rec -> if f elem then g elem : rec else rec) []
 objetos_en_posesión_de :: String -> Universo -> [Objeto]
 objetos_en_posesión_de p u = foldr(\elem rec -> if (en_posesión_de p elem) then elem:rec else rec) [] (objetos_en u)
 
+-- En base al comentario de la corrección, tal vez es suficiente con escribir la función como:
+-- 		filter (en_posesión_de p) (objetos_en u)
+-- Sino, no sé a qué se refiere con "están redefiniendo el filter"
+
 {-Ejercicio 5-}
 -- Asume que hay al menos un objeto
 objeto_libre_mas_cercano :: Universo -> Personaje -> Objeto
@@ -183,6 +187,27 @@ objeto_libre_mas_cercano u p = foldl (\fst_free_obj obj ->
     distance = distancia (Left p) (Right fst_free_obj)
     free_obj = objetos_libres_en u
     fst_free_obj = head (objetos_libres_en u)
+
+{-
+foldl1 ya te devuelve el último elem como caso base; por ej: 
+	foldl1 F [único_objeto_libre] ~> único_objeto_libre
+
+Como está escrita la función ahora, se ejecutaría de la forma
+	foldl F único_objeto_libre [único_objeto_libre] ~> F (foldl F único_objeto_libre []) único_objeto_libre
+	~> F único_objeto_libre único_objeto_libre ~> único_objeto_libre
+
+Con el foldl1, no hace falta calcular head de free_obj ni dar un caso base.
+
+
+
+Otro comentario, se calcula distance pero después no se usa. tal vez se podría definir (en el where) una
+"función" que sea: 
+	'dist per obj = distancia (Left per) (Right obj)' 
+y en la función del foldl metemos:
+	'if dist p obj < dist p fst_free_obj then obj else fst_free_obj'
+O si no usar un 'let' para cada distancia y que quede:
+	'if distA < distB then obj else free_obj'
+-}
 
 {-Ejercicio 6-}
 
