@@ -175,10 +175,10 @@ objetos_en_posesión_de p u = foldr(\elem rec -> if (en_posesión_de p elem) the
 {-Ejercicio 5-}
 -- Asume que hay al menos un objeto
 objeto_libre_mas_cercano :: Universo -> Personaje -> Objeto
-objeto_libre_mas_cercano u p = fst $ foldl (\(fst_free_obj, distance) obj ->
+objeto_libre_mas_cercano u p = foldl (\fst_free_obj obj ->
     let distA = distancia (Left p) (Right obj) in
-    if distA < distance then (obj, distA) else (fst_free_obj, distance))
-    (fst_free_obj, distance) free_obj
+    if distA < distancia (Left p) (Right fst_free_obj) then obj else fst_free_obj)
+    fst_free_obj free_obj
   where
     distance = distancia (Left p) (Right fst_free_obj)
     free_obj = objetos_libres_en u
