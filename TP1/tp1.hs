@@ -184,7 +184,6 @@ objeto_libre_mas_cercano u p = foldl (\fst_free_obj obj ->
     if distA < distancia (Left p) (Right fst_free_obj) then obj else fst_free_obj)
     fst_free_obj free_obj
   where
-    distance = distancia (Left p) (Right fst_free_obj)
     free_obj = objetos_libres_en u
     fst_free_obj = head (objetos_libres_en u)
 
