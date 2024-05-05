@@ -170,7 +170,7 @@ filterMap f g = foldr (\elem rec -> if f elem then g elem : rec else rec) []
 {-Ejercicio 4-}
 
 objetos_en_posesión_de :: String -> Universo -> [Objeto]
-objetos_en_posesión_de p u = foldr(\elem rec -> if (en_posesión_de p elem) then elem:rec else rec) [] (objetos_en u)
+objetos_en_posesión_de p u = filter (en_posesión_de p) (objetos_en u)
 
 -- En base al comentario de la corrección, tal vez es suficiente con escribir la función como:
 -- 		filter (en_posesión_de p) (objetos_en u)
