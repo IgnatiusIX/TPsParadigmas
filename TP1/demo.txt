@@ -2,51 +2,66 @@
 
 Vamos a probar esto por inducción sobre us.
 
-Queremos probar
+	P(us) = ∀ o :: Objeto . elem o (objetos_en us) ⇒ elem (Right o) us
 
-	P(us) ⇒ P(u:us)
-
-	P(us) = HI = elem o (objetos_en us) ⇒ elem (Right o) us
-
+Queremos probar P(us) ⇒ P(u:us).
+Utilizaremos las siguientes equivalencias, aplicables según el principio de reemplazo:
+	{F0} foldr _ z [] = z
+	{F1} foldr f z (a:as) = f a (foldr f z as)
+	{E0} elem a [] = False
+	{E1} elem a (x:xs) = a == x || elem a xs
+	{OBEN} objetos_en = filterMap es_un_objeto objetos_de
+	{FM} filterMap f g = foldr (\elem rec -> if f elem then g elem : rec else rec) []
+	{RedBeta} (\x -> M) y ⇒ M{x:=y} 
+	-- Vamos a aplicar las reducciones Beta reemplazando todas las variables ligadas en un solo paso, sin explicitar los reemplazos
+	-- Por ejemplo, (\a b ⇒ "hola") c d ⇒ "hola"{a:=c}{b:=d}
+	-- En estos casos, ⇒ se entiende como la relación de reducción.
 
 Caso Base {
 
-	us = []
+	Queremos ver que se cumpla P([]), es decir el caso base para us.
 
-	P([])
+	elem o (objetos_en []) ⇒ elem (Right o) [] =
 
-	elem o (objetos_en []) ⇒ elem (Right o) []
+	{OBEN} = elem o (filterMap es_un_objeto objeto_de []) ⇒ elem (Right o) [] =
 
-	elem o [] ⇒ elem (Right o) []
+	{FM} = elem o (foldr (\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) [] []) ⇒ elem (Right o) [] =
 
-	False ⇒ _ 
+	{F0} = elem o [] ⇒ elem (Right o) [] =
 
-	True
-
+	{E0} = False ⇒ _ =
+	
+	= True
+	(M ⇒ N es verdad cuando M es falso). □
 }
 
 Caso Inductivo {
 
-	Asumimos P(us) verdad.
+	Asumimos P(us) verdad. Luego, queremos ver que P(u:us) se cumpla, con 'u :: Either Personaje Objeto'.
+	Desarrollamos P(u:us) usando principio de reemplazo en la parte izquierda de la implicación:
 
-	us = (u:us), con u :: Either Personaje Objeto
+		elem o (objetos_en (u:us)) ⇒ elem (Right o) (u:us) =
 
-	Desarrollamos P(u:us) usando el principio de remplazo:
+		{OBEN} = elem o (filterMap es_un_objeto objeto_de (u:us)) ⇒ elem (Right o) (u:us) =
 
-		elem o (objetos_en (u:us)) ⇒ elem (Right o) (u:us) 
-
-		elem o (filterMap es_un_objeto objeto_de (u:us)) ⇒ elem (Right o) (u:us) 
-
-		elem o (foldr (\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) [] (u:us)) 
-			⇒ elem (Right o) (u:us)
+		{FM} = elem o (foldr (\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) [] (u:us)) ⇒ elem (Right o) (u:us) =
+!
+!			*Llamamos f a la funcion que le pasamos a foldr (\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec)*
 		
-		elem o ((\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) u objetos_en us)
-			⇒ elem (Right o) (u:us)
+		{F1} = elem o ((\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) u foldr f [] us) ⇒ elem (Right o) (u:us) ⇒
 		
-		Por regla Beta
+		{RedBeta} ⇒ elem o (if es_un_objeto u then objeto_de u:(foldr f [] us) else (foldr f [] us)) ⇒ elem (Right o) (u:us)
+! Hasta acá llegué
+			Veamos que por principio de reemplazo foldr f z us = objetos_en us
+
+				foldr f [] us = foldr (\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) [] us
+
+				= filterMap es_un_objeto objeto_de us = objetos_en us
+
+		Luego tenemos que:
 
 		elem o (if es_un_objeto u then objeto_de u:objetos_en us else objetos_en us) ⇒ elem (Right o) (u:us)
-		
+ 		
 	Por extensionabilidad de booleano es_un_objeto u es igual a True o False, luego tenemos dos casos:
 		
 	- Caso donde 'es_un_objeto u' es falso - {
@@ -87,8 +102,7 @@ Caso Inductivo {
 
 			o == x || elem o (objetos_de us) ⇒ (Right o) == (Right x) || elem (Right o) us
 		
-		Por extensionabilidad de booleano x == o es True o False
-
+		Por extensionabilidad de booleano x == o es True o False:
 		Si x == o {
 
 			o == x || elem o (objetos_de us) ⇒ (Right o) == (Right x) || elem (Right o) us
