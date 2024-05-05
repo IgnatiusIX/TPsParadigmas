@@ -172,10 +172,6 @@ filterMap f g = foldr (\elem rec -> if f elem then g elem : rec else rec) []
 objetos_en_posesión_de :: String -> Universo -> [Objeto]
 objetos_en_posesión_de p u = filter (en_posesión_de p) (objetos_en u)
 
--- En base al comentario de la corrección, tal vez es suficiente con escribir la función como:
--- 		filter (en_posesión_de p) (objetos_en u)
--- Sino, no sé a qué se refiere con "están redefiniendo el filter"
-
 {-Ejercicio 5-}
 -- Asume que hay al menos un objeto
 objeto_libre_mas_cercano :: Universo -> Personaje -> Objeto
