@@ -33,9 +33,10 @@ Caso Base {
 Caso Inductivo {
 
 	Asumimos P(us) verdad.
+
 	us = (u:us), con u :: Either Personaje Objeto
 
-	Desarrollamos P(u:us):
+	Desarrollamos P(u:us) usando principio de reemplazo en la parte izquierda de la implicacion:
 
 		elem o (objetos_en (u:us)) ⇒ elem (Right o) (u:us) 
 
@@ -43,14 +44,26 @@ Caso Inductivo {
 
 		elem o (foldr (\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) [] (u:us)) 
 			⇒ elem (Right o) (u:us)
+
+			*Llamamos f a la funcion que le pasamos a foldr (\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec)*
 		
-		elem o ((\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) u objetos_en us)
+		elem o ((\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) u foldr f [] us)
 			⇒ elem (Right o) (u:us)
 		
 		Por regla Beta
 
+		elem o (if es_un_objeto u then objeto_de u:(foldr f [] us) else (foldr f [] us)) ⇒ elem (Right o) (u:us)
+
+			Veamos que por principio de reemplazo foldr f us = objetos_en us
+
+				foldr f [] us = foldr (\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) [] us
+
+				= filterMap es_un_objeto objeto_de us = objetos_en us
+
+		Luego tenemos que:
+
 		elem o (if es_un_objeto u then objeto_de u:objetos_en us else objetos_en us) ⇒ elem (Right o) (u:us)
-		
+ 		
 	Por extensionabilidad de booleano es_un_objeto u es igual a True o False, luego tenemos dos casos:
 		
 	- Caso donde 'es_un_objeto u' es falso - {
