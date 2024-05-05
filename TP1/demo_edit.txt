@@ -2,12 +2,11 @@
 
 Vamos a probar esto por inducción sobre us.
 
+	P(us) = ∀ o :: Objeto . elem o (objetos_en us) ⇒ elem (Right o) us
+
 Queremos probar
 
 	P(us) ⇒ P(u:us)
-
-	P(us) = HI = elem o (objetos_en us) ⇒ elem (Right o) us
-
 
 Caso Base {
 
@@ -16,6 +15,12 @@ Caso Base {
 	P([])
 
 	elem o (objetos_en []) ⇒ elem (Right o) []
+
+	Por principio de reemplazo en la parte izquierda de la implicacion
+
+	elem o (filterMap es_un_personaje personaje_de []) ⇒ elem (Right o) []
+
+	elem o (foldr (\elem rec -> if es_un_personaje elem then personaje_de elem : rec else rec) [] []) ⇒ elem (Right o) []
 
 	elem o [] ⇒ elem (Right o) []
 
