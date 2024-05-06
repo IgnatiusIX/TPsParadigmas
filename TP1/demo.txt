@@ -12,10 +12,11 @@ Utilizaremos las siguientes equivalencias, aplicables según el principio de ree
 	{E1} elem a (x:xs) = a == x || elem a xs
 	{OBEN} objetos_en = filterMap es_un_objeto objetos_de
 	{FM} filterMap f g = foldr (\elem rec -> if f elem then g elem : rec else rec) []
-	{RedBeta} (\x -> M) y ⇒ M{x:=y} 
-	-- Vamos a aplicar las reducciones Beta reemplazando todas las variables ligadas en un solo paso, sin explicitar los reemplazos
-	-- Por ejemplo, (\a b ⇒ "hola") c d ⇒ "hola"{a:=c}{b:=d}
-	-- En estos casos, ⇒ se entiende como la relación de reducción.
+A su vez, para funciones lambda, utilizaremos la reducción beta: 
+	{RedBeta} (\x -> M) y ⇒ M{x:=y}
+	-- Notar que abusaremos la notación, reemplazando todas las variables de una función lambda en un solo paso.
+	-- Por ejemplo, (\a b ⇒ M) c d ⇒ M' (donde M' = M{a:=c}{b:=d})
+	-- En estos casos, ⇒ se entiende como la relación de 'reduce a'.
 
 Caso Base {
 
