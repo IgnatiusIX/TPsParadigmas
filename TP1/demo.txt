@@ -5,13 +5,14 @@ Vamos a probar esto por inducción sobre us.
 	P(us) = ∀ o :: Objeto . elem o (objetos_en us) ⇒ elem (Right o) us
 
 Queremos probar P(us) ⇒ P(u:us).
-Utilizaremos las siguientes equivalencias, aplicables según el principio de reemplazo:
+Utilizaremos las siguientes equivalencias, aplicables según el Principio de Reemplazo:
 	{F0} foldr _ z [] = z
 	{F1} foldr f z (a:as) = f a (foldr f z as)
 	{E0} elem a [] = False
 	{E1} elem a (x:xs) = a == x || elem a xs
 	{OBEN} objetos_en = filterMap es_un_objeto objetos_de
 	{FM} filterMap f g = foldr (\elem rec -> if f elem then g elem : rec else rec) []
+
 A su vez, para funciones lambda, utilizaremos la reducción beta: 
 	{RedBeta} (\x -> M) y ⇒ M{x:=y}
 	-- Notar que abusaremos la notación, reemplazando todas las variables de una función lambda en un solo paso.
@@ -24,36 +25,36 @@ Caso Base {
 
 	elem o (objetos_en []) ⇒ elem (Right o) [] =
 
-	{OBEN} = elem o (filterMap es_un_objeto objeto_de []) ⇒ elem (Right o) [] =
+{OBEN} = elem o (filterMap es_un_objeto objeto_de []) ⇒ elem (Right o) [] =
 
-	{FM} = elem o (foldr (\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) [] []) ⇒ elem (Right o) [] =
+{FM} = elem o (foldr (\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) [] []) ⇒ elem (Right o) [] =
 
-	{F0} = elem o [] ⇒ elem (Right o) [] =
+{F0} = elem o [] ⇒ elem (Right o) [] =
 
-	{E0} = False ⇒ _ =
+{E0} = False ⇒ _ =
 	
-	= True
-	(M ⇒ N es verdad cuando M es falso). □
-}
+= True □
+
+} 
 
 Caso Inductivo {
 
 	Asumimos P(us) verdad. Luego, queremos ver que P(u:us) se cumpla, con 'u :: Either Personaje Objeto'.
-	Desarrollamos P(u:us) usando principio de reemplazo en la parte izquierda de la implicación:
+	Desarrollamos P(u:us) usando el Principio de Reemplazo en la parte izquierda de la implicación:
 
-		elem o (objetos_en (u:us)) ⇒ elem (Right o) (u:us) =
+	elem o (objetos_en (u:us)) ⇒ elem (Right o) (u:us) =
 
-		{OBEN} = elem o (filterMap es_un_objeto objeto_de (u:us)) ⇒ elem (Right o) (u:us) =
+{OBEN} = elem o (filterMap es_un_objeto objeto_de (u:us)) ⇒ elem (Right o) (u:us) =
 
-		{FM} = elem o (foldr (\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) [] (u:us)) ⇒ elem (Right o) (u:us) =
-!
-!			*Llamamos f a la funcion que le pasamos a foldr (\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec)*
+{FM} =	elem o (foldr (\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) [] (u:us)) ⇒ elem (Right o) (u:us) =
+
+{F1} =	elem o ((\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) u (foldr FL* [] us)) ⇒ elem (Right o) (u:us) ⇒
+
+* Llamamos "FL" a la Funcion Lambda que le pasamos a foldr: '(\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec)'
 		
-		{F1} = elem o ((\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) u foldr f [] us) ⇒ elem (Right o) (u:us) ⇒
-		
-		{RedBeta} ⇒ elem o (if es_un_objeto u then objeto_de u:(foldr f [] us) else (foldr f [] us)) ⇒ elem (Right o) (u:us)
+{RedBeta} ⇒ elem o (if es_un_objeto u then objeto_de u:(foldr f [] us) else (foldr f [] us)) ⇒ elem (Right o) (u:us)
 ! Hasta acá llegué
-			Veamos que por principio de reemplazo foldr f z us = objetos_en us
+			Veamos que por Principio de Reemplazo, foldr f z us = objetos_en us
 
 				foldr f [] us = foldr (\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) [] us
 
@@ -63,7 +64,7 @@ Caso Inductivo {
 
 		elem o (if es_un_objeto u then objeto_de u:objetos_en us else objetos_en us) ⇒ elem (Right o) (u:us)
  		
-	Por extensionabilidad de booleano es_un_objeto u es igual a True o False, luego tenemos dos casos:
+	Por Extensionalidad de Booleanos es_un_objeto u es igual a True o False, luego tenemos dos casos:
 		
 	- Caso donde 'es_un_objeto u' es falso - {
 
@@ -103,7 +104,7 @@ Caso Inductivo {
 
 			o == x || elem o (objetos_de us) ⇒ (Right o) == (Right x) || elem (Right o) us
 		
-		Por extensionabilidad de booleano x == o es True o False:
+		Por Extensionalidad de Booleanos x == o es True o False:
 		Si x == o {
 
 			o == x || elem o (objetos_de us) ⇒ (Right o) == (Right x) || elem (Right o) us
