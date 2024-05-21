@@ -4,7 +4,7 @@ Vamos a probar esto por inducción sobre us.
 
 	P(us) = ∀ us :: Universo . ∀ o :: Objeto . elem o (objetos_en us) ⇒ elem (Right o) us
 
-Queremos probar 'P([])' y '∀ u :: Either Personaje Objeto, P(us) ⇒ P(u:us)'.
+Queremos probar 'P([])' y '∀ u :: Either Personaje Objeto. ∀ us :: Universo. P(us) ⇒ P(u:us)'.
 Utilizaremos las siguientes equivalencias, aplicables según el Principio de Reemplazo:
 	{F0} foldr _ z [] = z
 	{F1} foldr f z (a:as) = f a (foldr f z as)
@@ -43,8 +43,8 @@ Caso Inductivo {
 	Asumimos P(us) verdad como nuestra hipótesis inductiva:
 	{HI} elem o (objetos_en us) ⇒ elem (Right o) us = True
 
-	Queremos probar P(us) ⇒ P(u:us), ∀ u :: Either Personaje Objeto.
-	Desarrollamos P(u:us) usando el Principio de Reemplazo en la parte izquierda de la implicación:
+	Queremos probar '∀ u :: Either Personaje Objeto . ∀ us :: Universo . P(us) ⇒ P(u:us)'; 
+	desarrollamos P(u:us) usando el Principio de Reemplazo en la parte izquierda de la implicación:
 
 			 elem o (objetos_en (u:us)) ⇒ elem (Right o) (u:us) =
 {OBEN} 	   = elem o (filterMap es_un_objeto objeto_de (u:us)) ⇒ elem (Right o) (u:us) =
@@ -74,7 +74,7 @@ Caso Inductivo {
 {IfF}  ⇒R 	elem o (objetos_en us) ⇒ elem (Right o) (u:us) =
 {E1}    =   elem o (objetos_en us) ⇒ (Right o) == u || elem (Right o) us
 
-		Sabemos que 'es_un_objeto u' devuelve falso si y sólo si 'u = Left p', para algún 'p :: Personaje' sin pérdida de generalidad.
+		Sabemos que 'es_un_objeto u' devuelve falso si y sólo si 'u = Left p', 'p :: Personaje' sin pérdida de generalidad.
 		Luego, por cómo funciona** la igualdad entre objetos de tipo Either A B, la comparación
 		'Left _ == Right _' da False. Entonces,
 !		Como u no es del tipo 'Right x', con 'x :: Objeto',
