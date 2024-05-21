@@ -126,7 +126,7 @@ es_una_gema o = isPrefixOf "Gema de" (nombre_objeto o)
 
 {-Ejercicio 1-}
 
-foldPersonaje :: (Posición -> String -> a) -> ( a -> Dirección -> a) -> (a -> a) -> Personaje -> a 
+foldPersonaje :: (Posición -> String -> a) -> (a -> Dirección -> a) -> (a -> a) -> Personaje -> a 
 foldPersonaje fPersonaje fMueve fMuere p = case p of
     Personaje pos name -> fPersonaje pos name
     Mueve per dir -> fMueve  (recFold per) dir
@@ -182,27 +182,6 @@ objeto_libre_mas_cercano u p = foldl (\fst_free_obj obj ->
   where
     free_obj = objetos_libres_en u
     fst_free_obj = head (objetos_libres_en u)
-
-{-
-foldl1 ya te devuelve el último elem como caso base; por ej: 
-	foldl1 F [único_objeto_libre] ~> único_objeto_libre
-
-Como está escrita la función ahora, se ejecutaría de la forma
-	foldl F único_objeto_libre [único_objeto_libre] ~> F (foldl F único_objeto_libre []) único_objeto_libre
-	~> F único_objeto_libre único_objeto_libre ~> único_objeto_libre
-
-Con el foldl1, no hace falta calcular head de free_obj ni dar un caso base.
-
-
-
-Otro comentario, se calcula distance pero después no se usa. tal vez se podría definir (en el where) una
-"función" que sea: 
-	'dist per obj = distancia (Left per) (Right obj)' 
-y en la función del foldl metemos:
-	'if dist p obj < dist p fst_free_obj then obj else fst_free_obj'
-O si no usar un 'let' para cada distancia y que quede:
-	'if distA < distB then obj else free_obj'
--}
 
 {-Ejercicio 6-}
 
