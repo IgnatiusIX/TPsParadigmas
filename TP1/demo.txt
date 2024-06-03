@@ -19,7 +19,7 @@ A su vez, para funciones lambda, utilizaremos las reglas de reducción:
 	{RedBeta} (\x -> M) y ⇒ M{x:=y}
 	-- Notar que abusaremos la notación, reemplazando todas las variables de una función lambda en un solo paso.
 	-- Por ejemplo, (\a b ⇒ M) c d ⇒ M' (donde M' = M{a:=c}{b:=d})
-	-- En estos casos, ⇒R se entiende como la relación de 'reduce a'. "NO ES RENDUNDANTE USAR ⇒ TAMBIÉN LA USAMOS PARA LA iMPLICACIÓN"
+	-- En estos casos, ⇒R se entiende como la relación de 'reduce a'. "NO ES RENDUNDANTE USAR ⇒ TAMBIÉN LA USAMOS PARA LA iMPLICACIÓN?"
 	{IfT} if True then M1 else M2 ⇒ M1
 	{IfF} if False then M1 else M2 ⇒ M2
 
