@@ -409,3 +409,141 @@ testsEj7 = test [ -- Casos de test para el ejercicio 7
   podemos_ganarle_a_thanos universo_thanos_lose1 ~=? True,
   podemos_ganarle_a_thanos universo_thanos_lose2 ~=? True
   ]
+{--
+EJERCICIO 3, DEMOSTRACIÓN:
+
+∀ us :: Universo . ∀ o :: Objeto . elem o (objetos_en us) ⇒ elem (Right o) us
+
+Vamos a probar esto por inducción sobre us.
+
+	P(us) = ∀ o :: Objeto . elem o (objetos_en us) ⇒ elem (Right o) us
+
+Queremos probar 'P([])' y 'P(us) ⇒ P(u:us)'.
+
+Durante la demostración vamos a obviar los ∀ pero siempre estarían en cada paso.
+Utilizaremos las siguientes equivalencias, aplicables según el Principio de Reemplazo:
+	{F0} foldr _ z [] = z
+	{F1} foldr f z (a:as) = f a (foldr f z as)
+	{E0} elem a [] = False
+	{E1} elem a (x:xs) = a == x || elem a xs
+	{OBEN} objetos_en = filterMap es_un_objeto objeto_de
+	{FM} filterMap f g = foldr (\elem rec -> if f elem then g elem : rec else rec) []
+
+A su vez, para funciones lambda, utilizaremos las reglas de reducción: 
+	{RedBeta} (\x -> M) y ⇒ M{x:=y}
+	-- Notar que abusaremos la notación, reemplazando todas las variables de una función lambda en un solo paso.
+	-- Por ejemplo, (\a b ⇒ M) c d ⇒ M' (donde M' = M{a:=c}{b:=d})
+	-- En estos casos, ⇒R se entiende como la relación de 'reduce a'.
+	{IfT} if True then M1 else M2 ⇒ M1
+	{IfF} if False then M1 else M2 ⇒ M2
+
+Caso Base {
+
+	Queremos ver que se cumpla P([]), es decir el caso base para us.
+
+		 elem o (objetos_en []) ⇒ elem (Right o) []
+
+	Desarrollamos sobre el lado izquierdo de la implicación:
+
+		 elem o (objetos_en []) ⇒ elem (Right o) [] =
+{OBEN} = elem o (filterMap es_un_objeto objeto_de []) ⇒ elem (Right o) [] =
+{FM}   = elem o (foldr (\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) [] []) ⇒ elem (Right o) [] =
+{F0}   = elem o [] ⇒ elem (Right o) [] =
+{E0}   = False ⇒ _ =
+	   = True
+
+} !!□
+
+Caso Inductivo {
+
+	Asumimos P(us) verdad como nuestra hipótesis inductiva:
+	{HI}∀ o :: Objeto . elem o (objetos_en us) ⇒ elem (Right o) us = True
+
+	Queremos probar 'P(us) ⇒ P(u:us)'; 
+	desarrollamos P(u:us) usando el Principio de Reemplazo en la parte izquierda de la implicación:
+
+			 elem o (objetos_en (u:us)) ⇒ elem (Right o) (u:us) =
+{OBEN} 	   = elem o (filterMap es_un_objeto objeto_de (u:us)) ⇒ elem (Right o) (u:us) =
+{FM}   	   = elem o (foldr (\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) [] (u:us)) ⇒ elem (Right o) (u:us) =
+{F1}   	   = elem o ((\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) u (foldr FL* [] us)) ⇒ elem (Right o) (u:us) ⇒R 
+
+* Llamamos "FL" a la Función Lambda que le pasamos a foldr: '(\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec)'
+
+{RedBeta} ⇒R elem o (if es_un_objeto u then objeto_de u : (foldr FL [] us) else (foldr FL [] us)) ⇒ elem (Right o) (u:us)
+
+		-- Veamos que por Principio de Reemplazo, foldr FL [] us = objetos_en us
+
+    		 foldr FL [] us = 
+    	   = foldr (\elem rec -> if es_un_objeto elem then objeto_de elem : rec else rec) [] us =
+    {FM}   = filterMap es_un_objeto objeto_de us = 
+    {OBEN} = objetos_en us
+
+	Luego tenemos que:
+
+	elem o (if es_un_objeto u then objeto_de u : (objetos_en us) else (objetos_en us)) ⇒ elem (Right o) (u:us)
+
+	Por Extensionalidad de Booleanos, 'es_un_objeto u' es igual a True o False. Luego, tenemos los casos:
+		
+	- 'es_un_objeto u' es False - {
+
+		 	elem o (if False then objeto_de u : (objetos_en us) else (objetos_en us)) ⇒ elem (Right o) (u:us) ⇒R 
+{IfF}  ⇒R 	elem o (objetos_en us) ⇒ elem (Right o) (u:us) =
+{E1}    =   elem o (objetos_en us) ⇒ (Right o) == u || elem (Right o) us
+
+		Sabemos que 'es_un_objeto u' devuelve falso si y sólo si 'u = Left p', 'p :: Personaje' sin pérdida de generalidad.
+		Luego, por cómo funciona** la igualdad entre objetos de tipo Either A B, la comparación
+		'Left _ == Right _' da False. Entonces,
+!		Como u no es del tipo 'Right x', con cualquier 'x :: Objeto',
+!		por cómo funciona** la igualdad entre objetos de
+!		tipo Either A B, sabemos que '(Right o) == u' es falso. Luego,
+
+			elem o (objetos_en us) ⇒ False || elem (Right o) us =
+		=	elem o (objetos_en us) ⇒ elem (Right o) us =
+{HI}	=	True
+
+! Introducir cita sobre cómo funciona igualdad en tipos Either
+** A falta de 
+
+	}
+
+	- 'es_un_objeto u' es True - {
+
+		 	elem o (if True then objeto_de u : (objetos_en us) else (objetos_en us)) ⇒ elem (Right o) (u:us) ⇒R 
+{IfT}  ⇒R 	elem o (objeto_de u : (objetos_en us)) ⇒ elem (Right o) (u:us) =
+{E1}    =   o == (objeto_de u) || elem o (objeto_de us) ⇒ elem (Right o) (u:us)
+{E1}    =   o == (objeto_de u) || elem o (objeto_de us) ⇒ (Right o) == u || elem (Right o) us
+
+		Tomamos 'u = (Right x)', para algún 'x :: Objeto'.
+
+	    	Entonces, aplicando el Principio de Reemplazo a objeto_de u:
+
+	    		objeto_de u = objeto_de (Right x) = x
+
+		Reemplazamos en la implicación original
+
+			o == x || elem o (objeto_de us) ⇒ (Right o) == (Right x) || elem (Right o) us
+
+		Por Extensionalidad de Booleanos 'o == x' es True o False. Al mismo tiempo, 
+		'(Right o) == (Right x)' también va a compartir el mismo valor de verdad, por definición de 
+		igualdad entre objetos de tipo Either A B:
+
+		- 'o == x' y '(Right o) == (Right x)' son True - {
+
+			True || elem o (objeto_de us)  ⇒ True || elem (Right o) us =
+		=	True || _ ⇒ True || _ =
+		=	True ⇒ True = 
+		=	True
+
+		} 
+
+		- 'o == x' y '(Right o) == (Right x)' son False - {
+
+			False || elem o (objeto_de us) ⇒ False || elem (Right o) us =
+		=	elem o (objeto_de us) ⇒ elem (Right o) us =
+{HI}	=	True
+
+		}
+	}
+}
+--}
+
