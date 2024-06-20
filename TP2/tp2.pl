@@ -10,19 +10,15 @@ tablero(X, Y, [T|Ts]):- X > 0, length(T, Y), X1 is X-1, tablero(X1, Y, Ts).
 
 %% Ejercicio 2
 %% ocupar(+Pos,?Tablero) será verdadero cuando la posición indicada esté ocupada.
-%iesimo(+N, ?L, ?X)
-iesimo(0,[T|Ts], T).
-iesimo(N, [T|Ts], Fila) :- N > 0, N1 is N-1, iesimo(N1, Ts, Fila).
-
 ocupar(pos(X, Y), Ts) :- nonvar(Ts), iesimo(X, Ts, Fila), iesimo(Y,Fila, PosBuscada),
     PosBuscada = ocupada.
 ocupar(pos(X,Y), Ts) :- var(Ts), X1 is X+1, Y1 is Y+1, tablero(X1, Y1,Ts), 
     iesimo(X, Ts, Fila), 
     iesimo(Y, Fila, PosBuscada), PosBuscada = ocupada.
-    
-%iesimo(?Xs ,+N, ?X)
-%iesimo([X|_], 0, X).
-%iesimo([_|Xs] , N, V):- N > 0, N1 is N-1, iesimo(Xs, N1, V).
+
+%iesimo(+N, ?L, ?X)
+iesimo(0,[T|Ts], T).
+iesimo(N, [T|Ts], Fila) :- N > 0, N1 is N-1, iesimo(N1, Ts, Fila).    
 
 %% Ejercicio 3
 %% vecino(+Pos, +Tablero, -PosVecino) será verdadero cuando PosVecino sea
