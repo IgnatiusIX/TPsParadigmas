@@ -37,10 +37,10 @@ vecino(pos(X,Y),[T|Ts], pos(X1, Y1)) :- member(dir(N, M),[dir(1, 0),dir(-1, 0),d
 %% Ejercicio 4
 %% vecinoLibre(+Pos, +Tablero, -PosVecino) idem vecino/3 pero además PosVecino
 %% debe ser una celda transitable (no ocupada) en el Tablero
-vecinoLibre(P, T, V) :- vecino(P, T, V), not(ocupar(V, T)).
+vecinoLibre(P, T, V) :- vecino(P, T, V), not(ocupada(V, T)).
 % Tal vez definir un "ocupada?" que devuelva true si la posición P es variable? Así, 'ocupar' ocupa,
 % mientras que 'ocupada?' verifica si está ocupado o no. O sino preguntamos en clase.
-% ocupada?(pos(X, Y), Ts) :- nonvar(Ts), iesimo(X, Ts, Fila), iesimo(Y,Fila, Pos), nonvar(Pos).
+ocupada(pos(X, Y), Ts) :- nonvar(Ts), iesimo(X, Ts, Fila), iesimo(Y,Fila, Pos), nonvar(Pos).
 % vs
 % ocupar(pos(X, Y), Ts) :- nonvar(Ts), iesimo(X, Ts, Fila), iesimo(Y,Fila, ocupada).
 
@@ -58,7 +58,7 @@ vecinoLibre(P, T, V) :- vecino(P, T, V), not(ocupar(V, T)).
 %% Consejo: Utilizar una lista auxiliar con las posiciones visitadas
  
 
-camino(Inicio, Fin, T, [Inicio|Camino]) :- caminoAux(Inicio, Fin, T, Camino, []).
+camino(Inicio, Fin, T, [Inicio | Camino]) :- caminoAux(Inicio, Fin, T, Camino, [Inicio]).
 
 caminoAux(pos(X, Y), pos(X, Y), _, [], _).
 caminoAux(Inicio, Fin, T, [Vecino|Camino], Visitados) :- Inicio \= Fin , vecinoLibre(Inicio, T, Vecino), not(member(Vecino, Visitados)),
@@ -72,7 +72,7 @@ caminoAux(Inicio, Fin, T, [Vecino|Camino], Visitados) :- Inicio \= Fin , vecinoL
 %% Ejercicio 6
 %% camino2(+Inicio, +Fin, +Tablero, -Camino) ídem camino/4 pero que las soluciones
 %% se instancien en orden creciente de longitud.
-camino2(Inicio, Fin, [T|Ts], Camino) :- length([T|Ts], Fila), length(T, Columna), 
+camino2(Inicio, Fin, [T|Ts], [Inicio|Camino]) :- length([T|Ts], Fila), length(T, Columna), 
     Longmaximo is  Fila*Columna, 
     between(0, Longmaximo, Len), camino(Inicio, Fin, [T|Ts], Camino),
     length(Camino, Len). 
