@@ -71,9 +71,8 @@ caminoAux(Inicio, Fin, T, [Vecino|Camino], Visitados) :- Inicio \= Fin ,vecinoLi
 %% Ejercicio 6
 %% camino2(+Inicio, +Fin, +Tablero, -Camino) ídem camino/4 pero que las soluciones
 %% se instancien en orden creciente de longitud.
-camino2(Inicio, Fin, T, C) :- camino2Aux(Inicio, Fin, T, C, 0).
+camino2(Inicio, Fin, T, C) :- between(0, , Largo),camino(Inicio, Fin, T, C), length(C, Largo).
 
-camino2Aux(Inicio, Fin, T, C, Largo) :- camino(Inicio, Fin, T, C), length(C, Largo).
 
 %% 6.1. Analizar la reversibilidad de los parámetros Inicio y Camino justificando adecuadamente en
 %% cada caso por qué el predicado se comporta como lo hace.
@@ -94,7 +93,7 @@ otroCamino(Inicio, Fin, T, X) :- camino(Inicio, Fin, T, C1), length(C1, X1), X1 
 %% caminoDual(+Inicio, +Fin, +Tablero1, +Tablero2, -Camino) será verdadero
 %% cuando Camino sea un camino desde Inicio hasta Fin pasando al mismo tiempo
 %% sólo por celdas transitables de ambos tableros.
-caminoDual(_,_,_,_,_).
+caminoDual(Inicio, Fin, T1, T2, C) :- camino(Inicio, Fin, T1, C), camino(Inicio, Fin, T2, C).
 
 %%%%%%%%
 %% TESTS
