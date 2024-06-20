@@ -57,10 +57,10 @@ vecinoLibre(P, T, V) :- vecino(P, T, V), not(ocupar(V, T)).
 %% Consejo: Utilizar una lista auxiliar con las posiciones visitadas
  
 
-camino(Inicio, Fin, T, Camino) :- caminoAux(Inicio, Fin, T, Camino, []).
+camino(Inicio, Fin, T, [Inicio|Camino]) :- caminoAux(Inicio, Fin, T, Camino, []).
 
 caminoAux(pos(X, Y), pos(X, Y), _, [], _).
-caminoAux(Inicio, Fin, T, [Inicio,Vecino|Camino], Visitados) :- Inicio \= Fin ,vecinoLibre(Inicio, T, Vecino), not(member(Vecino, Visitados)),
+caminoAux(Inicio, Fin, T, [Vecino|Camino], Visitados) :- Inicio \= Fin ,vecinoLibre(Inicio, T, Vecino), not(member(Vecino, Visitados)),
                     caminoAux(Vecino, Fin, T, Camino, [Vecino|Visitados]).
  
 %% 5.1. Analizar la reversibilidad de los parámetros Fin y Camino justificando adecuadamente en cada
@@ -75,7 +75,7 @@ camino2(Inicio, Fin, [T|Ts], Camino) :- length([T|Ts], Fila), length(T, Columna)
     Longmaximo is  Fila*Columna, 
     between(0, Longmaximo, Len), camino(Inicio, Fin, [T|Ts], Camino),
     length(Camino, Len). 
-    
+
 %% 6.1. Analizar la reversibilidad de los parámetros Inicio y Camino justificando adecuadamente en
 %% cada caso por qué el predicado se comporta como lo hace.
 
