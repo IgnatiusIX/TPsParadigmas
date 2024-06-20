@@ -12,15 +12,18 @@ tablero(X, Y, [T|Ts]):- X > 0, length(T, Y), X1 is X-1, tablero(X1, Y, Ts).
 %% ocupar(+Pos,?Tablero) será verdadero cuando la posición indicada esté ocupada.
 %PREGUNTAR, EJEMPLO CONTRADICTORIO A LO QUE SE PIDE
 ocupar(pos(X, Y), Ts) :- nonvar(Ts), iesimo(X, Ts, Fila), iesimo(Y,Fila, PosBuscada), nonvar(PosBuscada).
-
+% reescritura sugerida:
+% ocupar(pos(X, Y), Ts) :- nonvar(Ts), iesimo(X, Ts, Fila), iesimo(Y, Fila, ocupada).
 
 ocupar(pos(X,Y), Ts) :- var(Ts), X1 is X+1, Y1 is Y+1, tablero(X1, Y1,Ts), 
     iesimo(X, Ts, Fila), 
     iesimo(Y, Fila, PosBuscada), PosBuscada = ocupada.
+% reescritura sugerida:
+% ocupar(P, Ts) :- var(Ts), X1 is X+1, Y1 is Y+1, tablero(X1, Y1,Ts), ocupar(P, Ts).
 
 %iesimo(+N, ?L, ?X)
 iesimo(0,[T|_], T).
-iesimo(N, [_|Ts], Fila) :- N > 0, N1 is N-1, iesimo(N1, Ts, Fila).    
+iesimo(N, [_|Ts], Fila) :- N > 0, N1 is N-1, iesimo(N1, Ts, Fila).
 
 %% Ejercicio 3
 %% vecino(+Pos, +Tablero, -PosVecino) será verdadero cuando PosVecino sea
@@ -28,14 +31,15 @@ iesimo(N, [_|Ts], Fila) :- N > 0, N1 is N-1, iesimo(N1, Ts, Fila).
 %% pos(F,C), donde Pos=pos(F,C). Las celdas contiguas puede ser a lo sumo cuatro
 %% dado que el robot se moverá en forma ortogonal.
 vecino(pos(X,Y),[T|Ts], pos(X1, Y1)) :- member(dir(N, M),[dir(1, 0),dir(-1, 0),dir(0, 1), dir(0,-1)]), 
-    X1 is X+N, Y1 is Y+M, length([T|Ts], F), length(T, C), F1 is F-1, C1 is C-1,
+    X1 is X+N, Y1 is Y+M, length([T | Ts], F), length(T, C), F1 is F-1, C1 is C-1,
     between(0, F1, X1), between(0, C1, Y1).
 
 %% Ejercicio 4
 %% vecinoLibre(+Pos, +Tablero, -PosVecino) idem vecino/3 pero además PosVecino
 %% debe ser una celda transitable (no ocupada) en el Tablero
 vecinoLibre(P, T, V) :- vecino(P, T, V), not(ocupar(V, T)).
-
+% Tal vez definir un "ocupada?" que devuelva true si la posición P es variable? Así, 'ocupar' ocupa,
+% mientras que 'ocupada?' verifica si está ocupado o no. O sino preguntamos en clase.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%
