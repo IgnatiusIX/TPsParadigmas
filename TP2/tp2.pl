@@ -71,10 +71,11 @@ caminoAux(Inicio, Fin, T, [Vecino|Camino], Visitados) :- Inicio \= Fin ,vecinoLi
 %% Ejercicio 6
 %% camino2(+Inicio, +Fin, +Tablero, -Camino) ídem camino/4 pero que las soluciones
 %% se instancien en orden creciente de longitud.
-camino2(Inicio, Fin, T, C) :- camino2Aux(Inicio, Fin, T, C, 0).
 
-camino2Aux(Inicio, Fin, T, C, Largo) :- camino(Inicio, Fin, T, C), length(C, Largo).
-
+camino2(Inicio, Fin, [T|Ts], Camino) :- length([T|Ts], Fila), length(T, Columna), 
+    Longmaximo is  Fila*Columna, 
+    between(0, Longmaximo, Len), camino(Inicio, Fin, [T|Ts], Camino),
+    length(Camino, Len). 
 %% 6.1. Analizar la reversibilidad de los parámetros Inicio y Camino justificando adecuadamente en
 %% cada caso por qué el predicado se comporta como lo hace.
 
