@@ -10,10 +10,11 @@ tablero(X, Y, [T|Ts]):- X > 0, length(T, Y), X1 is X-1, tablero(X1, Y, Ts).
 
 %% Ejercicio 2
 %% ocupar(+Pos,?Tablero) será verdadero cuando la posición indicada esté ocupada.
-%PREGUNTAR, EJEMPLO CONTRADICTORIO A LO QUE SE PIDE
+%PREGUNTAR, EJEMPLO CONTRADICTORIO A LO QUE SE PIDE !!!!!!!!!!!!!!!!!!!!!
 ocupar(pos(X, Y), Ts) :- nonvar(Ts), iesimo(X, Ts, Fila), iesimo(Y,Fila, PosBuscada), nonvar(PosBuscada).
 % reescritura sugerida:
 % ocupar(pos(X, Y), Ts) :- nonvar(Ts), iesimo(X, Ts, Fila), iesimo(Y, Fila, ocupada).
+%TIENE QUE DAR TODOS LOS TABLEROS?? !!!!!!!!!!!!!!!!!!!
 
 ocupar(pos(X,Y), Ts) :- var(Ts), X1 is X+1, Y1 is Y+1, tablero(X1, Y1,Ts), 
     iesimo(X, Ts, Fila), 
@@ -79,7 +80,9 @@ camino2(_,_,_,_).
 %% Ejercicio 7
 %% caminoOptimo(+Inicio, +Fin, +Tablero, -Camino) será verdadero cuando Camino sea un
 %% camino óptimo sobre Tablero entre Inicio y Fin. Notar que puede no ser único.
-caminoOptimo(_,_,_,_).
+caminoOptimo(Inicio, Fin, T, C) :- camino(Inicio, Fin, T, C), length(C, X),not(otroCamino(Inicio, FIn, T, X)).
+
+otroCamino(Inicio, Fin, T, X) :- camino(Inicio, Fin, T, C1), length(C1, X1), X1 > X.
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 %% Tableros simultáneos
