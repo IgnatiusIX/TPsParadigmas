@@ -75,9 +75,9 @@ camino2(_,_,_,_).
 %% Ejercicio 7
 %% caminoOptimo(+Inicio, +Fin, +Tablero, -Camino) será verdadero cuando Camino sea un
 %% camino óptimo sobre Tablero entre Inicio y Fin. Notar que puede no ser único.
-caminoOptimo(Inicio, Fin, T, C) :- camino(Inicio, Fin, T, C), not(otroCamino(Inicio, FIn, T, X)).
+caminoOptimo(Inicio, Fin, T, C) :- camino(Inicio, Fin, T, C), length(C, X),not(otroCamino(Inicio, FIn, T, X)).
 
-otroCamino(Inicio, Fin, T, X) :- camino(Inicio, Fin, T, C1), length(C1, X1), length(C, X), X1 > X.
+otroCamino(Inicio, Fin, T, X) :- camino(Inicio, Fin, T, C1), length(C1, X1), X1 > X.
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 %% Tableros simultáneos
