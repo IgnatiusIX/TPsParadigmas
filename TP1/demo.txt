@@ -3,7 +3,7 @@
 Vamos a probar esta conjetura por inducción sobre us. Queremos ver que valga:
 
 	∀ us :: Universo . P(us)
-	donde P(us) = ∀ o :: Objeto . elem o (objetos_en us) ⇒ elem (Right o) us
+	donde: P(us) = ∀ o :: Objeto . elem o (objetos_en us) ⇒ elem (Right o) us
 
 Queremos probar 'P([])' y 'P(us) ⇒ P(u:us)'.
 
@@ -119,12 +119,10 @@ Caso Inductivo {
 		}	
 	}
 
-	Esto nos muestra que vale la implicación P(us) ⇒ P(u:us). 
+	Esto nos muestra que vale la implicación P(us) ⇒ P(u:us), ya sea 'u' un objeto o un personaje.
 }
 
 Hemos probado que vale P, tanto en el caso base [] como el caso inductivo (us implica u:us),
-para todo Objeto y Universo. Luego, queda demostrado nuestra conjetura:
+para todo Objeto 'o' y Universo 'us'. Luego, queda demostrado nuestra conjetura:
 
 	∀ us :: Universo . P(us)
-
-
