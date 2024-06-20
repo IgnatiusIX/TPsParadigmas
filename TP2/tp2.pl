@@ -5,7 +5,9 @@
 %% Ejercicio 1
 %% tablero(+Filas,+Columnas,-Tablero) instancia una estructura de tablero en blanco
 %% de Filas x Columnas, con todas las celdas libres.
-tablero(_,_,_).
+tablero(0, _, []).
+tablero(X, Y, [T|Ts]):- X > 0, length(T, Y), X1 is X-1, tablero(X1, Y, Ts).
+
 
 %% Ejercicio 2
 %% ocupar(+Pos,?Tablero) será verdadero cuando la posición indicada esté ocupada.
