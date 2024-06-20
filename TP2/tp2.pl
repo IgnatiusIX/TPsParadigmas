@@ -10,17 +10,10 @@ tablero(X, Y, [T|Ts]):- X > 0, length(T, Y), X1 is X-1, tablero(X1, Y, Ts).
 
 %% Ejercicio 2
 %% ocupar(+Pos,?Tablero) será verdadero cuando la posición indicada esté ocupada.
-%PREGUNTAR, EJEMPLO CONTRADICTORIO A LO QUE SE PIDE !!!!!!!!!!!!!!!!!!!!!
-ocupar(pos(X, Y), Ts) :- nonvar(Ts), iesimo(X, Ts, Fila), iesimo(Y,Fila, PosBuscada), nonvar(PosBuscada).
-% reescritura sugerida:
-% ocupar(pos(X, Y), Ts) :- nonvar(Ts), iesimo(X, Ts, Fila), iesimo(Y, Fila, ocupada).
-%TIENE QUE DAR TODOS LOS TABLEROS?? !!!!!!!!!!!!!!!!!!!
+ocupar(pos(X, Y), Ts) :- nonvar(Ts), iesimo(X, Ts, Fila), iesimo(Y,Fila, PosBuscada), PosBuscada = ocupada.
 
-ocupar(pos(X,Y), Ts) :- var(Ts), X1 is X+1, Y1 is Y+1, tablero(X1, Y1,Ts), 
-    iesimo(X, Ts, Fila), 
-    iesimo(Y, Fila, PosBuscada), PosBuscada = ocupada.
-% reescritura sugerida:
-% ocupar(P, Ts) :- var(Ts), X1 is X+1, Y1 is Y+1, tablero(X1, Y1,Ts), ocupar(P, Ts).
+ocupar(pos(X, Y), Ts) :- var(Ts), X1 is X+1, Y1 is Y+1, tablero(X1, Y1, Ts), ocupar(pos(X, Y), Ts).
+
 
 %iesimo(+N, ?L, ?X)
 iesimo(0,[T|_], T).
@@ -38,9 +31,8 @@ vecino(pos(X,Y),[T|Ts], pos(X1, Y1)) :- member(dir(N, M),[dir(1, 0),dir(-1, 0),d
 %% Ejercicio 4
 %% vecinoLibre(+Pos, +Tablero, -PosVecino) idem vecino/3 pero además PosVecino
 %% debe ser una celda transitable (no ocupada) en el Tablero
-vecinoLibre(P, T, V) :- vecino(P, T, V), not(ocupar(V, T)).
-% Tal vez definir un "ocupada?" que devuelva true si la posición P es variable? Así, 'ocupar' ocupa,
-% mientras que 'ocupada?' verifica si está ocupado o no. O sino preguntamos en clase.
+vecinoLibre(P, T, V) :- vecino(P, T, V), noOcupada(V, T).
+noOcupada(pos(X,Y), Ts) :- iesimo(X, Ts, Fila), iesimo(Y,Fila, PosBuscada), var(PosBuscada).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,7 +49,7 @@ vecinoLibre(P, T, V) :- vecino(P, T, V), not(ocupar(V, T)).
 %% Consejo: Utilizar una lista auxiliar con las posiciones visitadas
  
 
-camino(Inicio, Fin, T, [Inicio|Camino]) :- caminoAux(Inicio, Fin, T, Camino, []).
+camino(Inicio, Fin, T, [Inicio|Camino]) :- caminoAux(Inicio, Fin, T, Camino, [Inicio]).
 
 caminoAux(pos(X, Y), pos(X, Y), _, [], _).
 caminoAux(Inicio, Fin, T, [Vecino|Camino], Visitados) :- Inicio \= Fin ,vecinoLibre(Inicio, T, Vecino), not(member(Vecino, Visitados)),
@@ -83,7 +75,7 @@ camino2(Inicio, Fin, [T|Ts], Camino) :- length([T|Ts], Fila), length(T, Columna)
 %% Ejercicio 7
 %% caminoOptimo(+Inicio, +Fin, +Tablero, -Camino) será verdadero cuando Camino sea un
 %% camino óptimo sobre Tablero entre Inicio y Fin. Notar que puede no ser único.
-caminoOptimo(Inicio, Fin, T, C) :- camino(Inicio, Fin, T, C), length(C, X), not(otroCamino(Inicio, FIn, T, X)).
+caminoOptimo(Inicio, Fin, T, C) :- camino(Inicio, Fin, T, C), length(C, X), not(otroCamino(Inicio, Fin, T, X)).
 
 otroCamino(Inicio, Fin, T, X) :- camino(Inicio, Fin, T, C1), length(C1, X1), X1 > X.
 
