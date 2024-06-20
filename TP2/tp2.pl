@@ -10,15 +10,17 @@ tablero(X, Y, [T|Ts]):- X > 0, length(T, Y), X1 is X-1, tablero(X1, Y, Ts).
 
 %% Ejercicio 2
 %% ocupar(+Pos,?Tablero) será verdadero cuando la posición indicada esté ocupada.
-ocupar(pos(X, Y), Ts) :- nonvar(Ts), iesimo(X, Ts, Fila), iesimo(Y,Fila, PosBuscada),
-    PosBuscada = ocupada.
+%PREGUNTAR, EJEMPLO CONTRADICTORIO A LO QUE SE PIDE
+ocupar(pos(X, Y), Ts) :- nonvar(Ts), iesimo(X, Ts, Fila), iesimo(Y,Fila, PosBuscada), nonvar(PosBuscada).
+
+
 ocupar(pos(X,Y), Ts) :- var(Ts), X1 is X+1, Y1 is Y+1, tablero(X1, Y1,Ts), 
     iesimo(X, Ts, Fila), 
     iesimo(Y, Fila, PosBuscada), PosBuscada = ocupada.
 
 %iesimo(+N, ?L, ?X)
-iesimo(0,[T|Ts], T).
-iesimo(N, [T|Ts], Fila) :- N > 0, N1 is N-1, iesimo(N1, Ts, Fila).    
+iesimo(0,[T|_], T).
+iesimo(N, [_|Ts], Fila) :- N > 0, N1 is N-1, iesimo(N1, Ts, Fila).    
 
 %% Ejercicio 3
 %% vecino(+Pos, +Tablero, -PosVecino) será verdadero cuando PosVecino sea
@@ -32,7 +34,7 @@ vecino(pos(X,Y),[T|Ts], pos(X1, Y1)) :- member(dir(N, M),[dir(1, 0),dir(-1, 0),d
 %% Ejercicio 4
 %% vecinoLibre(+Pos, +Tablero, -PosVecino) idem vecino/3 pero además PosVecino
 %% debe ser una celda transitable (no ocupada) en el Tablero
-vecinoLibre(P, T, V) :- vecino(P, T, V), not(ocupar(T, V)).
+vecinoLibre(P, T, V) :- vecino(P, T, V), not(ocupar(V, T)).
 
 
 
@@ -48,8 +50,14 @@ vecinoLibre(P, T, V) :- vecino(P, T, V), not(ocupar(T, V)).
 %% Notar que la cantidad de caminos es finita y por ende se tiene que poder recorrer
 %% todas las alternativas eventualmente.
 %% Consejo: Utilizar una lista auxiliar con las posiciones visitadas
-camino(_,_,_,_).
+ 
 
+camino(Inicio, Fin, T, Camino) :- caminoAux(Inicio, Fin, T, Camino, []).
+
+caminoAux(pos(X, Y), pos(X, Y), _, [], _).
+caminoAux(Inicio, Fin, T, [Vecino|Camino], Visitados) :- Inicio \= Fin ,vecinoLibre(Inicio, T, Vecino), not(member(Vecino, Visitados)),
+                    caminoAux(Vecino, Fin, T, Camino, [Vecino|Visitados]).
+ 
 %% 5.1. Analizar la reversibilidad de los parámetros Fin y Camino justificando adecuadamente en cada
 %% caso por qué el predicado se comporta como lo hace
 
