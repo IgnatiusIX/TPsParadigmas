@@ -8,7 +8,6 @@
 tablero(0, _, []).
 tablero(X, Y, [T|Ts]):- X > 0, length(T, Y), X1 is X-1, tablero(X1, Y, Ts).
 
-
 %% Ejercicio 2
 %% ocupar(+Pos,?Tablero) será verdadero cuando la posición indicada esté ocupada.
 ocupar(_,_).
@@ -23,7 +22,14 @@ vecino(_,_,_).
 %% Ejercicio 4
 %% vecinoLibre(+Pos, +Tablero, -PosVecino) idem vecino/3 pero además PosVecino
 %% debe ser una celda transitable (no ocupada) en el Tablero
-vecinoLibre(_,_,_).
+vecinoLibre(P, T, V) :- vecino(P, T, V), ocupada(T, V).
+
+ocupada([X|_], pos(0, Y)) :- iesimo(X, Y, P), P =\= ocupada.
+ocupada([X|Xs], pos(X, Y)) :- X > 0, X1 is X-1, ocupada(Xs, pos(X1, Y)).
+
+%iesimo(?Xs ,+N, ?X)
+iesimo([X|_], 0, X).
+iesimo([_|Xs] , N, V):- N > 0, N1 is N-1, iesimo(Xs, N1, V).
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 %% Definicion de caminos
@@ -90,17 +96,17 @@ cantidadTestsCaminoOptimo(0). % Actualizar con la cantidad de tests que entregue
 cantidadTestsCaminoDual(0). % Actualizar con la cantidad de tests que entreguen
 % Agregar más tests
 
-tests(tablero) :- cantidadTestsTablero(M), forall(between(1,M,N), testTablero(N)).
-tests(vecino) :- cantidadTestsVecino(M), forall(between(1,M,N), testVecino(N)).
-tests(camino) :- cantidadTestsCamino(M), forall(between(1,M,N), testCamino(N)).
-tests(caminoOptimo) :- cantidadTestsCaminoOptimo(M), forall(between(1,M,N), testCaminoOptimo(N)).
-tests(caminoDual) :- cantidadTestsCaminoDual(M), forall(between(1,M,N), testCaminoDual(N)).
-
-tests(todos) :-
-  tests(tablero),
-  tests(vecino),
-  tests(camino),
-  tests(caminoOptimo),
-  tests(caminoDual).
-
-tests :- tests(todos).
+%tests(tablero) :- cantidadTestsTablero(M), forall(between(1,M,N), testTablero(N)).
+%tests(vecino) :- cantidadTestsVecino(M), forall(between(1,M,N), testVecino(N)).
+%tests(camino) :- cantidadTestsCamino(M), forall(between(1,M,N), testCamino(N)).
+%tests(caminoOptimo) :- cantidadTestsCaminoOptimo(M), forall(between(1,M,N), testCaminoOptimo(N)).
+%tests(caminoDual) :- cantidadTestsCaminoDual(M), forall(between(1,M,N), testCaminoDual(N)).
+%
+%tests(todos) :-
+%  tests(tablero),
+%  tests(vecino),
+%  tests(camino),
+%  tests(caminoOptimo),
+%  tests(caminoDual).
+%
+%tests :- tests(todos).
