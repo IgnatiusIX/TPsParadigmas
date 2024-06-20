@@ -83,7 +83,7 @@ camino2(Inicio, Fin, [T|Ts], Camino) :- length([T|Ts], Fila), length(T, Columna)
 %% Ejercicio 7
 %% caminoOptimo(+Inicio, +Fin, +Tablero, -Camino) será verdadero cuando Camino sea un
 %% camino óptimo sobre Tablero entre Inicio y Fin. Notar que puede no ser único.
-caminoOptimo(Inicio, Fin, T, C) :- camino(Inicio, Fin, T, C), length(C, X), not(otroCamino(Inicio, FIn, T, X)).
+caminoOptimo(Inicio, Fin, T, C) :- camino(Inicio, Fin, T, C), length(C, X), not(otroCamino(Inicio, Fin, T, X)).
 
 otroCamino(Inicio, Fin, T, X) :- camino(Inicio, Fin, T, C1), length(C1, X1), X1 > X.
 
@@ -101,13 +101,31 @@ caminoDual(Inicio, Fin, T1, T2, C) :- camino(Inicio, Fin, T1, C), camino(Inicio,
 %% TESTS
 %%%%%%%%
 
-cantidadTestsTablero(2). % Actualizar con la cantidad de tests que entreguen
-testTablero(1) :- tablero(0,0,[]).
-testTablero(2) :- ocupar(pos(0,0), [[ocupada]]).
+tablero(tests,T) :- tablero(5,5,T), ocupar(pos(0,1),T), ocupar(pos(1,1),T).
+
+cantidadTestsTablero(8). % Actualizar con la cantidad de tests que entreguen
+testTablero(0) :- tablero(0,0,[]).
+testTablero(1) :- tablero(3,2,[[_,_],[_,_],[_,_]]).
+testTablero(2) :- tablero(2,3,[[_,_,_],[_,_,_]]).
+testTablero(3) :- not(tablero(2,2,[[_,_,_],[_,_]])).
+testTablero(4) :- not(tablero(2,2,[[_,_],[_,_],[_,_]])).
+testOcupar(0) :- ocupar(pos(0,0), [[ocupada]]).
+testOcupar(1) :- tablero(tests,T), ocupar(pos(0,1), T).
+testOcupar(2) :- tablero(tests,T), not(ocupar(pos(0,0), T)).
 % Agregar más tests
 
-cantidadTestsVecino(1). % Actualizar con la cantidad de tests que entreguen
-testVecino(1) :- vecino(pos(0,0), [[_,_]], pos(0,1)).
+cantidadTestsVecino(7). % Actualizar con la cantidad de tests que entreguen
+testVecino(0) :- tablero(2,2,T), vecino(pos(0,0), T, pos(0,1)), vecino(pos(0,0), T, pos(1,0)).
+testVecino(1) :- tablero(3,3,T), vecino(pos(1,1), T, pos(1,0)), vecino(pos(1,1), T, pos(0,1)),
+	vecino(pos(1,1), T, pos(2,1)), vecino(pos(1,1), T, pos(1,0)). % es posible irse en todas las direcciones
+testVecino(2) :- not(vecino(pos(0,0), [[_]], pos(0,1))), not(vecino(pos(0,0), [[_]], pos(1,0))). % no se va del tablero
+testVecino(3) :- not(vecino(pos(0,0), [[_,_],[_,_]], pos(1,1))). % no se mueve en diagonal
+testVecino(4) :- not(vecino(pos(1,1), [[_,_],[_,_]], pos(0,0))). % no se mueve en diagonal II
+testVecino(5) :- not(vecino(pos(0,0), [[_,_],[_,_]], pos(0,0))). % la posición actual no es vecino
+testVecino(6) :- vecino(pos(0,0), [[_,_],[ocupada,_]], pos(1,0)). % las posiciones ocupadas son vecinos
+testVecinoLibre(0) : - tablero(2,2,T), vecinoLibre(pos(1,0),T,pos(1,0)), vecinoLibre(pos(1,0),T,pos(0,1)).
+testVecinoLibre(1) : - tablero(2,2,T), ocupar(pos(0,1),T), not(vecinoLibre(pos(1,0),T,pos(0,1))). % los vecinos ocupados no son libres
+testVecinoLibre(2) : - tablero(2,2,T), ocupar(pos(0,1),T), ocupar(pos(1,0),T), not(vecinoLibre(pos(1,0),T,X)). % los hay vecinos libres
 % Agregar más tests
 
 cantidadTestsCamino(0). % Actualizar con la cantidad de tests que entreguen
