@@ -12,7 +12,8 @@ tablero(X, Y, [T|Ts]):- X > 0, length(T, Y), X1 is X-1, tablero(X1, Y, Ts).
 %% ocupar(+Pos,?Tablero) será verdadero cuando la posición indicada esté ocupada.
 %PREGUNTAR, EJEMPLO CONTRADICTORIO A LO QUE SE PIDE !!!!!!!!!!!!!!!!!!!!!
 %ocupar(pos(X, Y), Ts) :- nonvar(Ts), iesimo(X, Ts, Fila), iesimo(Y,Fila, PosBuscada), nonvar(PosBuscada).
-ocupar(pos(X, Y), Ts) :- nonvar(Ts), iesimo(X, Ts, Fila), iesimo(Y,Fila, PosBuscada), nonvar(PosBuscada).
+%ocupar(pos(X, Y), Ts) :- nonvar(Ts), iesimo(X, Ts, Fila), iesimo(Y,Fila, PosBuscada), nonvar(PosBuscada).
+ocupar(pos(X, Y), Ts) :- nonvar(Ts), iesimo(X, Ts, Fila), iesimo(Y,Fila, ocupada).
 % reescritura sugerida: "ocupar(pos(X, Y), Ts) :- nonvar(Ts), iesimo(X, Ts, Fila), iesimo(Y, Fila, ocupada)."
 %TIENE QUE DAR TODOS LOS TABLEROS?? !!!!!!!!!!!!!!!!!!!
 
@@ -72,10 +73,10 @@ caminoAux(Inicio, Fin, T, [Vecino|Camino], Visitados) :- Inicio \= Fin , vecinoL
 %% Ejercicio 6
 %% camino2(+Inicio, +Fin, +Tablero, -Camino) ídem camino/4 pero que las soluciones
 %% se instancien en orden creciente de longitud.
-camino2(Inicio, Fin, [T|Ts], [Inicio|Camino]) :- length([T|Ts], Fila), length(T, Columna), 
-    Longmaximo is  Fila*Columna, 
-    between(0, Longmaximo, Len), camino(Inicio, Fin, [T|Ts], Camino),
-    length(Camino, Len). 
+camino2(Inicio, Fin, [T | Ts], Camino) :- length([T | Ts], Fila), length(T, Columna),
+    Longmaximo is  Fila * Columna,
+    between(0, Longmaximo, Len), camino(Inicio, Fin, [T | Ts], Camino),
+    length(Camino, Len).
 
 %% 6.1. Analizar la reversibilidad de los parámetros Inicio y Camino justificando adecuadamente en
 %% cada caso por qué el predicado se comporta como lo hace.
@@ -138,8 +139,9 @@ testCamino(4) :- tablero(2,2,T), not(camino(pos(0,0), pos(0,1), T, [pos(0,0), po
 testCamino(5) :- tablero(tests,T), not(camino(pos(0,0), pos(0,1), T, [pos(0,0), pos(0,1)])). % no valen caminos a celdas bloqueadas
 testCamino(6) :- tablero(tests,T), not(camino(pos(0,0), pos(0,2), T, [pos(0,0), pos(0,1), pos(0,2)])). % no valen caminos que atraviesen bloqueos
 testCamino(7) :- tablero(tests,T), camino(pos(0,0), pos(0,2), T, [pos(0,0), pos(1,0), pos(2,0), pos(2,1), pos(2,2), pos(1,2), pos(0,2)]). % rodea bloqueos
-testCamino2(0) :- tablero(2,2,T), camino2(pos(0,0), pos(0,1), T, C), length(C,2), camino(pos(0,0),pos(0,1),T,C1), length(C1,X), 2 =< X.
-testCamino2(1) :- tablero(2,2,T), camino2(pos(0,0), pos(0,1), T, C), length(C,2), camino2(pos(0,0),pos(0,1),T,C1), length(C1,4).
+testCamino2(0) :- tablero(2,2,T), camino2(pos(0,0), pos(0,1), T, C), length(C, 2), camino(pos(0,0),pos(0,1),T,C1), length(C1,X), 2 =< X.
+testCamino2(1) :- tablero(2,2,T), camino2(pos(0,0), pos(0,1), T, C), length(C,2), camino2(pos(0,0),pos(0,1),T,C1), C1 \= C, length(C1, 4).
+testCamino2(2) :- tablero(2,2,T), camino2(pos(0,0), pos(0,1), T, C), camino2(pos(0,0),pos(0,1),T,C1), C1 \= C, not((camino2(pos(0,0),pos(0,1),T,C2),C \= C2, C1 \= C2)).
 % Agregar más tests
 
 cantidadTestsCaminoOptimo(0). % Actualizar con la cantidad de tests que entreguen
