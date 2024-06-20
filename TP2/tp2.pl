@@ -66,7 +66,9 @@ caminoAux(Inicio, Fin, T, [Vecino|Camino], Visitados) :- Inicio \= Fin ,vecinoLi
 %% Ejercicio 6
 %% camino2(+Inicio, +Fin, +Tablero, -Camino) ídem camino/4 pero que las soluciones
 %% se instancien en orden creciente de longitud.
-camino2(_,_,_,_).
+camino2(Inicio, Fin, T, C) :- camino2Aux(Inicio, Fin, T, C, 0).
+
+camino2Aux(Inicio, Fin, T, C, Largo) :- camino(Inicio, Fin, T, C), length(C, Largo).
 
 %% 6.1. Analizar la reversibilidad de los parámetros Inicio y Camino justificando adecuadamente en
 %% cada caso por qué el predicado se comporta como lo hace.
@@ -75,7 +77,7 @@ camino2(_,_,_,_).
 %% Ejercicio 7
 %% caminoOptimo(+Inicio, +Fin, +Tablero, -Camino) será verdadero cuando Camino sea un
 %% camino óptimo sobre Tablero entre Inicio y Fin. Notar que puede no ser único.
-caminoOptimo(Inicio, Fin, T, C) :- camino(Inicio, Fin, T, C), length(C, X),not(otroCamino(Inicio, FIn, T, X)).
+caminoOptimo(Inicio, Fin, T, C) :- camino(Inicio, Fin, T, C), length(C, X), not(otroCamino(Inicio, FIn, T, X)).
 
 otroCamino(Inicio, Fin, T, X) :- camino(Inicio, Fin, T, C1), length(C1, X1), X1 > X.
 
