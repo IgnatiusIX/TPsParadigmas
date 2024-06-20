@@ -12,24 +12,25 @@ tablero(X, Y, [T|Ts]):- X > 0, length(T, Y), X1 is X-1, tablero(X1, Y, Ts).
 %% ocupar(+Pos,?Tablero) será verdadero cuando la posición indicada esté ocupada.
 ocupar(_,_).
 
+%iesimo(?Xs ,+N, ?X)
+iesimo([X|_], 0, X).
+iesimo([_|Xs] , N, V):- N > 0, N1 is N-1, iesimo(Xs, N1, V).
+
 %% Ejercicio 3
 %% vecino(+Pos, +Tablero, -PosVecino) será verdadero cuando PosVecino sea
 %% un átomo de la forma pos(F', C') y pos(F',C') sea una celda contigua a
 %% pos(F,C), donde Pos=pos(F,C). Las celdas contiguas puede ser a lo sumo cuatro
 %% dado que el robot se moverá en forma ortogonal.
-vecino(_,_,_).
+vecino(pos(X,Y),[T|Ts], pos(X1, Y1)) :- member(dir(N, M),[dir(1, 0),dir(-1, 0),dir(0, 1), dir(0,-1)]), 
+    X1 is X+N, Y1 is Y+M, length([T|Ts], F), length(T, C), F1 is F-1, C1 is C-1,
+    between(0, F1, X1), between(0, C1, Y1).
 
 %% Ejercicio 4
 %% vecinoLibre(+Pos, +Tablero, -PosVecino) idem vecino/3 pero además PosVecino
 %% debe ser una celda transitable (no ocupada) en el Tablero
-vecinoLibre(P, T, V) :- vecino(P, T, V), ocupada(T, V).
+vecinoLibre(P, T, V) :- vecino(P, T, V), not(ocupar(T, V)).
 
-ocupada([X|_], pos(0, Y)) :- iesimo(X, Y, P), P =\= ocupada.
-ocupada([X|Xs], pos(X, Y)) :- X > 0, X1 is X-1, ocupada(Xs, pos(X1, Y)).
 
-%iesimo(?Xs ,+N, ?X)
-iesimo([X|_], 0, X).
-iesimo([_|Xs] , N, V):- N > 0, N1 is N-1, iesimo(Xs, N1, V).
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 %% Definicion de caminos
