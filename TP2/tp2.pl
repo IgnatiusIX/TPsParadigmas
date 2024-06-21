@@ -2,20 +2,28 @@
 %% Tablero
 %%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%
+%% Consideraciones
+%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% - Una celda no está ocupada si es de la forma _ (es decir, es una variable libre).
+%
+
 %% Ejercicio 1
 %% tablero(+Filas,+Columnas,-Tablero) instancia una estructura de tablero en blanco
 %% de Filas x Columnas, con todas las celdas libres.
 
-% tablero(+Filas, +Columnas, -Tablero).
 tablero(0, _, []).
-tablero(X, Y, [T|Ts]):- X > 0, length(T, Y), X1 is X-1, tablero(X1, Y, Ts).
+tablero(X, Y, [T | Ts]):- X > 0, length(T, Y), X1 is X-1, tablero(X1, Y, Ts).
 
 %% Ejercicio 2
 %% ocupar(+Pos,?Tablero) será verdadero cuando la posición indicada esté ocupada.
+
 ocupar(pos(X, Y), Ts) :- nonvar(Ts), iesimo(X, Ts, Fila), iesimo(Y, Fila, ocupada).
 ocupar(pos(X, Y), Ts) :- var(Ts), X1 is X + 1, Y1 is Y + 1, tablero(X1, Y1, Ts), ocupar(pos(X, Y), Ts).
 
 %% iesimo(+N, ?L, ?X) vale cuando X está en la posición 'I' de la lista L.
+
 iesimo(0, [T | _], T).
 iesimo(I, [_ | Ts], Fila) :- I > 0, I1 is I - 1, iesimo(I1, Ts, Fila).
 
@@ -24,6 +32,7 @@ iesimo(I, [_ | Ts], Fila) :- I > 0, I1 is I - 1, iesimo(I1, Ts, Fila).
 %% un átomo de la forma pos(F', C') y pos(F',C') sea una celda contigua a
 %% pos(F,C), donde Pos=pos(F,C). Las celdas contiguas puede ser a lo sumo cuatro
 %% dado que el robot se moverá en forma ortogonal.
+
 vecino(pos(X,Y),[T | Ts], pos(X1, Y1)) :- member(dir(N, M),[dir(1, 0), dir(-1, 0), dir(0, 1), dir(0,-1)]), 
     X1 is X + N, Y1 is Y + M, length([T | Ts], F), length(T, C), F1 is F - 1, C1 is C - 1,
     between(0, F1, X1), between(0, C1, Y1).
@@ -31,9 +40,11 @@ vecino(pos(X,Y),[T | Ts], pos(X1, Y1)) :- member(dir(N, M),[dir(1, 0), dir(-1, 0
 %% Ejercicio 4
 %% vecinoLibre(+Pos, +Tablero, -PosVecino) idem vecino/3 pero además PosVecino
 %% debe ser una celda transitable (no ocupada) en el Tablero.
+
 vecinoLibre(P, T, V) :- vecino(P, T, V), noOcupada(V, T).
 
 %% noOcupada(+Pos, +Tablero) es verdad si y solo sí Pos es una posición libre en Tablero.
+
 noOcupada(pos(X, Y), Ts) :- nonvar(Ts), iesimo(X, Ts, Fila), iesimo(Y, Fila, PosBuscada), var(PosBuscada).
 
 
@@ -56,7 +67,8 @@ camino(Inicio, Fin, T, [Inicio | Camino]) :- caminoAux(Inicio, Fin, T, Camino, [
 %% caminoAux(+Inicio, +Fin, +Tablero, -Camino, +Visitados) es verdadero siempre que Camino sea una lista
 %% de posiciones desde algún vecino libre de Inicio hasta Fin. Toda posición en Camino debe estar libre,
 %% ser vecina de la posición anterior (si es que existe), y no aparecen más de una única vez en Camino.
-%% A su vez, una posición está en Camino si y solo sí está en Visitados.
+%% A su vez, una posición está en Camino si y solo si está en Visitados.
+
 caminoAux(pos(X, Y), pos(X, Y), _, [], _).
 caminoAux(Inicio, Fin, T, [Vecino | Camino], Visitados) :- Inicio \= Fin, vecinoLibre(Inicio, T, Vecino), 
 	not(member(Vecino, Visitados)), caminoAux(Vecino, Fin, T, Camino, [Vecino | Visitados]).
@@ -67,8 +79,9 @@ caminoAux(Inicio, Fin, T, [Vecino | Camino], Visitados) :- Inicio \= Fin, vecino
 
 
 %% Ejercicio 6
-%% camino2(+Inicio, +Fin, +Tablero, -Camino) ídem camino/4 pero que las soluciones
+%% camino2(+Inicio, +Fin, +Tablero, -Camino) idem camino/4 pero que las soluciones
 %% se instancien en orden creciente de longitud.
+
 camino2(Inicio, Fin, [T | Ts], Camino) :- length([T | Ts], Fila), length(T, Columna),
 	Longmaximo is  Fila * Columna, between(0, Longmaximo, Len),
 	camino(Inicio, Fin, [T | Ts], Camino), length(Camino, Len).
@@ -77,14 +90,17 @@ camino2(Inicio, Fin, [T | Ts], Camino) :- length([T | Ts], Fila), length(T, Colu
 %% cada caso por qué el predicado se comporta como lo hace.
 
 
+
 %% Ejercicio 7
 %% caminoOptimo(+Inicio, +Fin, +Tablero, -Camino) será verdadero cuando Camino sea un
 %% camino óptimo sobre Tablero entre Inicio y Fin. Notar que puede no ser único.
+
 caminoOptimo(Inicio, Fin, T, C) :- camino(Inicio, Fin, T, C), length(C, X),
 	not(otroCamino(Inicio, Fin, T, X)).
 
 %% otroCamino(+Inicio, +Fin, +Tablero, -LongitudÓptima) sólo es verdad cuando existe algún camino
-% cuya longitud sea menor  que la del camino óptimo.
+%% cuya longitud sea menor  que la del camino óptimo.
+
 otroCamino(Inicio, Fin, T, X) :- camino(Inicio, Fin, T, C1), length(C1, X1), X1 < X.
 
 %%%%%%%%%%%%%%%%%%%%%%%%
@@ -95,6 +111,7 @@ otroCamino(Inicio, Fin, T, X) :- camino(Inicio, Fin, T, C1), length(C1, X1), X1 
 %% caminoDual(+Inicio, +Fin, +Tablero1, +Tablero2, -Camino) será verdadero
 %% cuando Camino sea un camino desde Inicio hasta Fin pasando al mismo tiempo
 %% sólo por celdas transitables de ambos tableros.
+
 caminoDual(Inicio, Fin, T1, T2, C) :- camino(Inicio, Fin, T1, C), camino(Inicio, Fin, T2, C).
 
 %%%%%%%%
@@ -118,14 +135,14 @@ cantidadTestsVecino(10). % Actualizar con la cantidad de tests que entreguen
 testVecino(1) :- tablero(2,2,T), vecino(pos(0,0), T, pos(0,1)), vecino(pos(0,0), T, pos(1,0)).
 testVecino(2) :- tablero(3,3,T), vecino(pos(1,1), T, pos(1,0)), vecino(pos(1,1), T, pos(0,1)),
 	vecino(pos(1,1), T, pos(2,1)), vecino(pos(1,1), T, pos(1,0)). % es posible irse en todas las direcciones
-testVecino(3) :- not(vecino(pos(0,0), [[_]], pos(0,1))), not(vecino(pos(0,0), [[_]], pos(1,0))). % no se va del tablero
+testVecino(3) :- not(vecino(pos(0,0), [[_]], _)). % no se va del tablero
 testVecino(4) :- not(vecino(pos(0,0), [[_, _],[_, _]], pos(1,1))). % no se mueve en diagonal
 testVecino(5) :- not(vecino(pos(1,1), [[_, _],[_, _]], pos(0,0))). % no se mueve en diagonal II
 testVecino(6) :- not(vecino(pos(0,0), [[_, _],[_, _]], pos(0,0))). % la posición actual no es vecino
 testVecino(7) :- vecino(pos(0,0), [[_, _],[ocupada, _]], pos(1,0)). % las posiciones ocupadas son vecinos
 testVecino(8) :- tablero(2,2,T), vecinoLibre(pos(0,0), T, pos(1,0)), vecinoLibre(pos(0,0), T, pos(0,1)).
 testVecino(9) :- tablero(2,2,T), ocupar(pos(0,1),T), not(vecinoLibre(pos(0,0), T, pos(0,1))). % los vecinos ocupados no son libres
-testVecino(10) :- tablero(2,2,T), ocupar(pos(0,1),T), ocupar(pos(1,0), T), not(vecinoLibre(pos(0,0),T, _)). % los hay vecinos libres
+testVecino(10) :- tablero(2,2,T), ocupar(pos(0,1),T), ocupar(pos(1,0), T), not(vecinoLibre(pos(0,0),T, _)). % no hay vecinos libres si las celdas contiguas están ocupadas
 % Agregar más tests
 
 cantidadTestsCamino(13). % Actualizar con la cantidad de tests que entreguen
