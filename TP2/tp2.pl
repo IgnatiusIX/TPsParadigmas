@@ -5,18 +5,19 @@
 %% Ejercicio 1
 %% tablero(+Filas,+Columnas,-Tablero) instancia una estructura de tablero en blanco
 %% de Filas x Columnas, con todas las celdas libres.
+
+% tablero(+Filas, +Columnas, -Tablero).
 tablero(0, _, []).
 tablero(X, Y, [T|Ts]):- X > 0, length(T, Y), X1 is X-1, tablero(X1, Y, Ts).
 
 %% Ejercicio 2
 %% ocupar(+Pos,?Tablero) será verdadero cuando la posición indicada esté ocupada.
-ocupar(pos(X, Y), Ts) :- nonvar(Ts), iesimo(X, Ts, Fila), iesimo(Y,Fila, ocupada).
-
+ocupar(pos(X, Y), Ts) :- nonvar(Ts), iesimo(X, Ts, Fila), iesimo(Y, Fila, ocupada).
 ocupar(pos(X, Y), Ts) :- var(Ts), X1 is X+1, Y1 is Y+1, tablero(X1, Y1, Ts), ocupar(pos(X, Y), Ts).
 
-%iesimo(+N, ?L, ?X)
-iesimo(0,[T|_], T).
-iesimo(N, [_|Ts], Fila) :- N > 0, N1 is N-1, iesimo(N1, Ts, Fila).
+%% iesimo(+N, ?L, ?X) vale cuando X está en la posición 'i' de la lista L.
+iesimo(0, [T | _], T).
+iesimo(N, [_ | Ts], Fila) :- N > 0, N1 is N-1, iesimo(N1, Ts, Fila).
 
 %% Ejercicio 3
 %% vecino(+Pos, +Tablero, -PosVecino) será verdadero cuando PosVecino sea
@@ -29,9 +30,12 @@ vecino(pos(X,Y),[T|Ts], pos(X1, Y1)) :- member(dir(N, M),[dir(1, 0),dir(-1, 0),d
 
 %% Ejercicio 4
 %% vecinoLibre(+Pos, +Tablero, -PosVecino) idem vecino/3 pero además PosVecino
-%% debe ser una celda transitable (no ocupada) en el Tablero
+%% debe ser una celda transitable (no ocupada) en el Tablero.
 vecinoLibre(P, T, V) :- vecino(P, T, V), noOcupada(V, T).
-noOcupada(pos(X,Y), Ts) :- nonvar(Ts), iesimo(X, Ts, Fila), iesimo(Y,Fila, PosBuscada), var(PosBuscada).
+
+%% noOcupada(+Pos, +Tablero) es verdad si y solo sí Pos es una posición libre en Tablero.
+noOcupada(pos(X, Y), Ts) :- nonvar(Ts), iesimo(X, Ts, Fila), iesimo(Y, Fila, PosBuscada), var(PosBuscada).
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%
@@ -46,13 +50,16 @@ noOcupada(pos(X,Y), Ts) :- nonvar(Ts), iesimo(X, Ts, Fila), iesimo(Y,Fila, PosBu
 %% Notar que la cantidad de caminos es finita y por ende se tiene que poder recorrer
 %% todas las alternativas eventualmente.
 %% Consejo: Utilizar una lista auxiliar con las posiciones visitadas
- 
 
 camino(Inicio, Fin, T, [Inicio | Camino]) :- caminoAux(Inicio, Fin, T, Camino, [Inicio]).
 
+%% caminoAux(+Inicio, +Fin, +Tablero, -Camino, +Visitados) es verdadero siempre que Camino sea una lista
+%% de posiciones desde algún vecino libre de Inicio hasta Fin. Toda posición en Camino debe estar libre,
+%% ser vecina de la posición anterior (si es que existe), y no aparecen más de una única vez en Camino.
+%% A su vez, una posición está en Camino si y solo sí está en Visitados.
 caminoAux(pos(X, Y), pos(X, Y), _, [], _).
-caminoAux(Inicio, Fin, T, [Vecino|Camino], Visitados) :- Inicio \= Fin , vecinoLibre(Inicio, T, Vecino), not(member(Vecino, Visitados)),
-                    caminoAux(Vecino, Fin, T, Camino, [Vecino|Visitados]).
+caminoAux(Inicio, Fin, T, [Vecino | Camino], Visitados) :- Inicio \= Fin, vecinoLibre(Inicio, T, Vecino), 
+	not(member(Vecino, Visitados)), caminoAux(Vecino, Fin, T, Camino, [Vecino | Visitados]).
  
 %% 5.1. Analizar la reversibilidad de los parámetros Fin y Camino justificando adecuadamente en cada
 %% caso por qué el predicado se comporta como lo hace
@@ -76,6 +83,8 @@ camino2(Inicio, Fin, [T | Ts], Camino) :- length([T | Ts], Fila), length(T, Colu
 %% camino óptimo sobre Tablero entre Inicio y Fin. Notar que puede no ser único.
 caminoOptimo(Inicio, Fin, T, C) :- camino(Inicio, Fin, T, C), length(C, X), not(otroCamino(Inicio, Fin, T, X)).
 
+%% otroCamino(+Inicio, +Fin, +Tablero, -LongitudÓptima) sólo es verdad cuando existe algún camino
+% cuya longitud sea menor  que la del camino óptimo.
 otroCamino(Inicio, Fin, T, X) :- camino(Inicio, Fin, T, C1), length(C1, X1), X1 < X.
 
 %%%%%%%%%%%%%%%%%%%%%%%%
@@ -119,18 +128,23 @@ testVecino(9) :- tablero(2,2,T), ocupar(pos(0,1),T), not(vecinoLibre(pos(0,0), T
 testVecino(10) :- tablero(2,2,T), ocupar(pos(0,1),T), ocupar(pos(1,0), T), not(vecinoLibre(pos(0,0),T,_)). % los hay vecinos libres
 % Agregar más tests
 
-cantidadTestsCamino(11). % Actualizar con la cantidad de tests que entreguen
+cantidadTestsCamino(13). % Actualizar con la cantidad de tests que entreguen
 testCamino(1) :- tablero(2,2,T), camino(pos(0,0),pos(0,1),T,[pos(0,0),pos(0,1)]). % funciona básico
-testCamino(2) :- tablero(2,2,T), camino(pos(0,0),pos(0,1),T,[pos(0,0),pos(1,0),pos(1,1),pos(0,1)]). % funciona tomando desvíos
-testCamino(3) :- tablero(2,2,T), not(camino(pos(0,0), pos(1,1), T, [pos(0,0), pos(1,1)])). % no considera pasos ilegales
-testCamino(4) :- tablero(2,2,T), not(camino(pos(0,0), pos(1,1), T, [pos(0,0), pos(1,0)])). % no considera caminos que no llegan a destino
-testCamino(5) :- tablero(2,2,T), not(camino(pos(0,0), pos(0,1), T, [pos(0,0), pos(1,0), pos(1,1), pos(0,1),pos(0,0),pos(0,1)])). % no valen los ciclos
-testCamino(6) :- tablero(tests,T), not(camino(pos(0,0), pos(0,1), T, [pos(0,0), pos(0,1)])). % no valen caminos a celdas bloqueadas
-testCamino(7) :- tablero(tests,T), not(camino(pos(0,0), pos(0,2), T, [pos(0,0), pos(0,1), pos(0,2)])). % no valen caminos que atraviesen bloqueos
-testCamino(8) :- tablero(tests,T), camino(pos(0,0), pos(0,2), T, [pos(0,0), pos(1,0), pos(2,0), pos(2,1), pos(2,2), pos(1,2), pos(0,2)]). % rodea bloqueos
-testCamino(9) :- tablero(2,2,T), camino2(pos(0,0), pos(0,1), T, C), length(C, 2), camino(pos(0,0),pos(0,1),T,C1), length(C1,X), 2 =< X.
-testCamino(10) :- tablero(2,2,T), camino2(pos(0,0), pos(0,1), T, C), length(C,2), camino2(pos(0,0),pos(0,1),T,C1), C1 \= C, length(C1, 4).
-testCamino(11) :- tablero(2,2,T), camino2(pos(0,0), pos(0,1), T, C), camino2(pos(0,0),pos(0,1),T,C1), C1 \= C, not((camino2(pos(0,0),pos(0,1),T,C2),C \= C2, C1 \= C2)).
+testCamino(2) :- tablero(1,1,T), camino(pos(0,0),pos(0,0),T,[pos(0,0)]). % funciona para caminos de un solo vértice.
+testCamino(3) :- tablero(3,3,T), camino(pos(2,2),pos(2,2),T,[pos(2,2)]). % idem 2
+testCamino(4) :- tablero(2,2,T), camino(pos(0,0),pos(0,1),T,[pos(0,0),pos(1,0),pos(1,1),pos(0,1)]). % funciona tomando desvíos
+testCamino(5) :- tablero(2,2,T), not(camino(pos(0,0), pos(1,1), T, [pos(0,0), pos(1,1)])). % no considera pasos ilegales
+testCamino(6) :- tablero(2,2,T), not(camino(pos(0,0), pos(1,1), T, [pos(0,0), pos(1,0)])). % no considera caminos que no llegan a destino
+testCamino(7) :- tablero(2,2,T), not(camino(pos(0,0), pos(0,1), T, [pos(0,0), pos(1,0), pos(1,1), pos(0,1),pos(0,0),pos(0,1)])). % no valen los ciclos
+testCamino(8) :- tablero(tests,T), not(camino(pos(0,0), pos(0,1), T, [pos(0,0), pos(0,1)])). % no valen caminos a celdas bloqueadas
+testCamino(9) :- tablero(tests,T), not(camino(pos(0,0), pos(0,2), T, [pos(0,0), pos(0,1), pos(0,2)])). % no valen caminos que atraviesen bloqueos
+testCamino(10) :- tablero(tests,T), camino(pos(0,0), pos(0,2), T, [pos(0,0), pos(1,0), pos(2,0), pos(2,1), pos(2,2), pos(1,2), pos(0,2)]). % rodea bloqueos
+testCamino(11) :- tablero(2,2,T), camino2(pos(0,0), pos(0,1), T, C), length(C, X1), 
+	not((camino(pos(0,0),pos(0,1),T,C1), length(C1, X2), X1 > X2)). % todos los caminos encontrados tienen longitud mayor o igual al camino mínimo de camino2
+testCamino(12) :- tablero(2,2,T), camino2(pos(0,0), pos(0,1), T, C),
+	length(C,2), camino2(pos(0,0),pos(0,1),T,C1), C1 \= C, length(C1, 4).
+testCamino(13) :- tablero(2,2,T), camino2(pos(0,0), pos(0,1), T, C), camino2(pos(0,0),pos(0,1),T,C1), C1 \= C,
+	not((camino2(pos(0,0),pos(0,1),T,C2), C \= C2, C1 \= C2)). % para un tablero de 2 x 2, camino2 encuentra sólo 2 caminos válidos y ninguno más.
 % Agregar más tests
 
 cantidadTestsCaminoOptimo(0). % Actualizar con la cantidad de tests que entreguen
