@@ -37,6 +37,10 @@ vecino(pos(X,Y),[T | Ts], pos(X1, Y1)) :- member(dir(N, M),[dir(1, 0), dir(-1, 0
     X1 is X + N, Y1 is Y + M, length([T | Ts], F), length(T, C), F1 is F - 1, C1 is C - 1,
     between(0, F1, X1), between(0, C1, Y1).
 
+% ! está bien esto?
+%% Acá se utiliza la técnica generate and test, donde se generan todos los posibles vecinos (norte, sur, este
+%% u oeste) y se verifica que estén dentro del tablero.
+
 %% Ejercicio 4
 %% vecinoLibre(+Pos, +Tablero, -PosVecino) idem vecino/3 pero además PosVecino
 %% debe ser una celda transitable (no ocupada) en el Tablero.
@@ -129,7 +133,6 @@ testTablero(5) :- not(tablero(2, 2, [[_, _], [_, _],[_, _]])).
 testTablero(6) :- ocupar(pos(0, 0), [[ocupada]]).
 testTablero(7) :- tablero(tests,T), not(noOcupada(pos(0,1), T)). % vale checkear si está ocupado un casillero.
 testTablero(8) :- tablero(tests,T), noOcupada(pos(0,0), T). % vale checkear si no está ocupado.
-% Agregar más tests
 
 cantidadTestsVecino(10). % Actualizar con la cantidad de tests que entreguen
 testVecino(1) :- tablero(2,2,T), vecino(pos(0,0), T, pos(0,1)), vecino(pos(0,0), T, pos(1,0)).
@@ -143,7 +146,6 @@ testVecino(7) :- vecino(pos(0,0), [[_, _],[ocupada, _]], pos(1,0)). % las posici
 testVecino(8) :- tablero(2,2,T), vecinoLibre(pos(0,0), T, pos(1,0)), vecinoLibre(pos(0,0), T, pos(0,1)).
 testVecino(9) :- tablero(2,2,T), ocupar(pos(0,1),T), not(vecinoLibre(pos(0,0), T, pos(0,1))). % los vecinos ocupados no son libres
 testVecino(10) :- tablero(2,2,T), ocupar(pos(0,1),T), ocupar(pos(1,0), T), not(vecinoLibre(pos(0,0),T, _)). % no hay vecinos libres si las celdas contiguas están ocupadas
-% Agregar más tests
 
 cantidadTestsCamino(13). % Actualizar con la cantidad de tests que entreguen
 testCamino(1) :- tablero(2,2,T), camino(pos(0,0),pos(0,1),T,[pos(0,0),pos(0,1)]). % funciona básico
@@ -162,7 +164,6 @@ testCamino(12) :- tablero(2,2,T), camino2(pos(0,0), pos(0,1), T, C),
 	length(C,2), camino2(pos(0,0),pos(0,1),T,C1), C1 \= C, length(C1, 4).
 testCamino(13) :- tablero(2,2,T), camino2(pos(0,0), pos(0,1), T, C), camino2(pos(0,0),pos(0,1),T,C1), C1 \= C,
 	not((camino2(pos(0,0),pos(0,1),T,C2), C \= C2, C1 \= C2)). % para un tablero de 2 x 2, camino2 encuentra sólo 2 caminos válidos y ninguno más.
-% Agregar más tests
 
 cantidadTestsCaminoOptimo(0). % Actualizar con la cantidad de tests que entreguen
 % Agregar más tests
