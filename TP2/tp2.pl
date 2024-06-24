@@ -80,7 +80,12 @@ caminoAux(Inicio, Fin, T, [Vecino | Camino], Visitados) :- Inicio \= Fin, vecino
 %% 5.1. Analizar la reversibilidad de los parámetros Fin y Camino justificando adecuadamente en cada
 %% caso por qué el predicado se comporta como lo hace
 
+% La reversibilidad sobre camino es posible sin ningún problema, ya que si no se instancia buscara un camino que logre cumplir
+% con lo pedido, ahora si se instancia Camino verificara entre todas sus posibles caminos si alguno unifica con el que le pasamos
+% como dato de entrada.
 
+% En cambio la reversibilidad sobre fin no esta garantizada ya que cuando tomamos el predicado caminoAux 
+% estamos comparando el valor Inicio que si esta instanciado con Fin que no esta instanciado y eso generaria inconvenientes.
 
 %% Ejercicio 6
 %% camino2(+Inicio, +Fin, +Tablero, -Camino) idem camino/4 pero que las soluciones
