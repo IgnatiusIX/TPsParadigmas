@@ -37,10 +37,6 @@ vecino(pos(X,Y),[T | Ts], pos(X1, Y1)) :- member(dir(N, M),[dir(1, 0), dir(-1, 0
     X1 is X + N, Y1 is Y + M, length([T | Ts], F), length(T, C), F1 is F - 1, C1 is C - 1,
     between(0, F1, X1), between(0, C1, Y1).
 
-% ! está bien esto?
-%% Acá se utiliza la técnica generate and test, donde se generan todos los posibles vecinos (norte, sur, este
-%% u oeste) y se verifica que estén dentro del tablero.
-
 %% Ejercicio 4
 %% vecinoLibre(+Pos, +Tablero, -PosVecino) idem vecino/3 pero además PosVecino
 %% debe ser una celda transitable (no ocupada) en el Tablero.
@@ -80,12 +76,12 @@ caminoAux(Inicio, Fin, T, [Vecino | Camino], Visitados) :- Inicio \= Fin, vecino
 %% 5.1. Analizar la reversibilidad de los parámetros Fin y Camino justificando adecuadamente en cada
 %% caso por qué el predicado se comporta como lo hace
 
-% La reversibilidad sobre camino es posible sin ningún problema, ya que si no se instancia buscara un camino que logre cumplir
-% con lo pedido, ahora si se instancia Camino verificara entre todas sus posibles caminos si alguno unifica con el que le pasamos
-% como dato de entrada.
+% La reversibilidad sobre Camino es posible sin ningún problema ya que, si no se instancia, se buscará un
+% camino que cumpla con lo pedido. Ahora bien, en el caso contrario, Camino verificará entre todas las 
+% posibles soluciones si alguno unifica con el que le pasamos como dato de entrada.
 
-% En cambio la reversibilidad sobre fin no esta garantizada ya que cuando tomamos el predicado caminoAux 
-% estamos comparando el valor Inicio que si esta instanciado con Fin que no esta instanciado y eso generaria inconvenientes.
+% En cambio la reversibilidad sobre Fin no está garantizada ya que, cuando tomamos la comparación 
+% Inicio \= Fin en caminoAux, ocurren inconvenientes al no unificar una variable (Fin) con un valor (Inicio).
 
 %% Ejercicio 6
 %% camino2(+Inicio, +Fin, +Tablero, -Camino) idem camino/4 pero que las soluciones
