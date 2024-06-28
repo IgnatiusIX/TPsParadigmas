@@ -95,7 +95,32 @@ camino2(Inicio, Fin, [T | Ts], Camino) :- length([T | Ts], Fila), length(T, Colu
 
 %% 6.1. Analizar la reversibilidad de los parámetros Inicio y Camino justificando adecuadamente en
 %% cada caso por qué el predicado se comporta como lo hace.
+%%reversibilidad sobre Inicio: camino2(-Inicio,+Fin,+Tablero,-Camino)
+%el predicado instancia a Inicio con el atomo instanciado en Fin, e instancia a Camino
+%como la lista [Inicio], lo que es correcto pero deberia devolver todos los posibles Caminos
+%con todos los Inicios váliddos. Luego length(Camino, Len) es verdadero
+%La única instanciación se de la siguiente forma (con Len =:= 1): desde camino2 se llama a camino 
+%(acá se instancia Camino como [Inicio | Camino']) y luego camino a caminoAux 
+%(donde se unifican en el caso base y se instancia Inicio y Camino', como Fin y 
+%[] respectivamente. 
+%La falla ocurre en el punto de que llama a caminoAux, ya que al pedir más respuestas
+%no elige el hecho sino la regla justo debajo y al intentar probar que Inicio \= Fin,
+%o sea que no unifiquen y falla ya que como Inicio no está instanciado Inicio y fin 
+%sí unifican. Luego cuando Len es mayor a 1, como el unico Camino que instancia camino es 
+%uno de longitud 1, siempre falla length(Camino, Len). No se cuelga ya que between queda
+%fuera de rango y el resto termina trivialmente ?¿
 
+%Reversibilidad de Camino: camino2(+Inicio,+Fin,+Tablero,+Camino)%
+%%el predicado es verdaero si Camino es valido, sino devuelve falso.
+%Esto cumple con lo que uno esperaría del predicado, por lo que es reversible.
+%La razón de esto es que camino2 va generando todos los caminos posibles y cuando Len se 
+%instancie con un valor igual a la longitud de Camino, al intentar demostrar camino con Camino instanciado
+%se verificará que Camino es un camino valido. Esto es por que camino es reversible, lo que a su vez se debe 
+%a que caminoAux es reversible, y esto último porque vecinoLibre es reversible. 
+%Sobre caminoAux lo que haces es Inicio tenga como vecino libre a Vecino (que es la cabeza de Camino)
+% lo que en conjunto y al reemplazar a Inicio por la cabeza de Camino, verifica que el camino sea valido.
+% Si Camino no es valido falla Inicio \= Fin, vecinoLibre(Inicio, T, Vecino) o al 
+% demostrar not(member(Vecino, Visitados))
 
 
 %% Ejercicio 7
