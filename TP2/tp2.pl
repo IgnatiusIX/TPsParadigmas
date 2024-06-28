@@ -80,8 +80,9 @@ caminoAux(Inicio, Fin, T, [Vecino | Camino], Visitados) :- Inicio \= Fin, vecino
 % camino que cumpla con lo pedido. Ahora bien, en el caso contrario, Camino verificará entre todas las 
 % posibles soluciones si alguno unifica con el que le pasamos como dato de entrada.
 
-% En cambio la reversibilidad sobre Fin no está garantizada, y eso se debe a la comparación Inicio \= Fin
-% que realiza caminoAux. Si Fin está instanciada, Inicio \= Fin puede fallar o no, explorando el árbol de
+% Cuando Fin no está instanciada, primero Fin unifica con el hecho de caminoAux, entonces Fin toma el valor de Inicio.
+% Cuando se le pide otra solución, ya no unifica con el hecho de CaminoAux y pasa a la siguiente regla.
+% Está regla realiza una comparación entre Inicio y Fin. Si Fin está instanciada, Inicio \= Fin puede fallar o no, explorando el árbol de
 % búsqueda si no lo hace. Cuando no se instancia, sin embargo, la comparación siempre falla, haciendo que 
 % caminoAux nunca entre en su segundo caso. Esto causaría que Camino devuelva únicamente [Inicio].
 
