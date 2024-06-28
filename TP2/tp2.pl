@@ -81,9 +81,9 @@ caminoAux(Inicio, Fin, T, [Vecino | Camino], Visitados) :- Inicio \= Fin, vecino
 % posibles soluciones si alguno unifica con el que le pasamos como dato de entrada.
 
 % En cambio la reversibilidad sobre Fin no está garantizada, y eso se debe a la comparación Inicio \= Fin
-% que realiza caminoAux. Si Fin está instanciada, Inicio \= Fin puede ser verdad o falso, explorando el
-% árbol si ocurre el primer caso. Si Fin no se instancia, sin embargo, la comparación siempre da false,
-% haciendo que caminoAux nunca entre en su segundo caso. Esto causaría que Camino devuelva únicamente [Inicio].
+% que realiza caminoAux. Si Fin está instanciada, Inicio \= Fin puede fallar o no, explorando el árbol de
+% búsqueda si no lo hace. Cuando no se instancia, sin embargo, la comparación siempre falla, haciendo que 
+% caminoAux nunca entre en su segundo caso. Esto causaría que Camino devuelva únicamente [Inicio].
 
 %% Ejercicio 6
 %% camino2(+Inicio, +Fin, +Tablero, -Camino) idem camino/4 pero que las soluciones
