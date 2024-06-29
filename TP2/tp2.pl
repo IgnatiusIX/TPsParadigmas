@@ -108,8 +108,7 @@ camino2(Inicio, Fin, [T | Ts], Camino) :- length([T | Ts], Fila), length(T, Colu
 %no elige el hecho sino la regla justo debajo y al intentar probar que Inicio \= Fin,
 %o sea que no unifiquen y falla ya que como Inicio no está instanciado Inicio y fin 
 %sí unifican. Luego cuando Len es mayor a 1, como el unico Camino que instancia camino es 
-%uno de longitud 1, siempre falla length(Camino, Len). No se cuelga ya que between queda
-%fuera de rango y el resto termina trivialmente ?¿
+%uno de longitud 1, siempre falla length(Camino, Len).
 
 %Reversibilidad de Camino: camino2(+Inicio,+Fin,+Tablero,+Camino)%
 %%el predicado es verdaero si Camino es valido, sino devuelve falso.
@@ -118,11 +117,15 @@ camino2(Inicio, Fin, [T | Ts], Camino) :- length([T | Ts], Fila), length(T, Colu
 %instancie con un valor igual a la longitud de Camino, al intentar demostrar camino con Camino instanciado
 %se verificará que Camino es un camino valido. Esto es por que camino es reversible, lo que a su vez se debe 
 %a que caminoAux es reversible, y esto último porque vecinoLibre es reversible. 
-%Sobre caminoAux lo que haces es Inicio tenga como vecino libre a Vecino (que es la cabeza de Camino)
-% lo que en conjunto y al reemplazar a Inicio por la cabeza de Camino, verifica que el camino sea valido.
-% Si Camino no es valido falla Inicio \= Fin, vecinoLibre(Inicio, T, Vecino) o al 
-% demostrar not(member(Vecino, Visitados))
-
+%Sobre caminoAux lo que hace que sea reversible es que comprueba que cada elemento consecutivo de Camino 
+%sea un movimiento valido a través del tablero, lo que se logra gracias a que vecinoLibre es reversible en Vecino.
+%Este último es reversible en Vecino ya que el predicado vecino(+Pos, +Tablero, -PosVecino) es reversible en 
+%PosVecino ya que con pos(X1,Y1), que ahora está instanciado, se intenta demostrar lo siguiente:
+%X1 is X + N, Y1 is Y + M, lo cual tiene exito cuando pos(X1,Y1) es algún vecino de Pos, y para el caso que 
+%el camino sea valido sucede (ya que Pos y PosVecino son elementos consecutivos de Camino), para el caso que no
+%sea valido, falla en este punto o al ver si la casilla está ocupada o no (en el predicado ocupada.
+% Si Camino no es valido, como se dijo anteriormente, falla Inicio \= Fin, vecinoLibre(Inicio, T, Vecino) (donde
+% puede fallar en vecino o noOcupada o al demostrar not(member(Vecino, Visitados)) o en 
 
 %% Ejercicio 7
 %% caminoOptimo(+Inicio, +Fin, +Tablero, -Camino) será verdadero cuando Camino sea un
