@@ -76,9 +76,9 @@ caminoAux(Inicio, Fin, T, [Vecino | Camino], Visitados) :- Inicio \= Fin, vecino
 %% 5.1. Analizar la reversibilidad de los parámetros Fin y Camino justificando adecuadamente en cada
 %% caso por qué el predicado se comporta como lo hace
 
-% La reversibilidad sobre Camino es posible sin ningún problema ya que, si no se instancia, se buscará un
-% camino que cumpla con lo pedido. Ahora bien, en el caso contrario, Camino verificará entre todas las 
-% posibles soluciones si alguno unifica con el que le pasamos como dato de entrada.
+% La reversibilidad sobre Camino es posible sin ningún problema. Camino entra dentro del predicado caminoAux, donde Camino solo se usa
+% para llamar recursivamente a caminoAux, donde si no se instancia, se buscará un camino que cumpla con lo pedido. 
+% Ahora bien, en el caso contrario, Camino verificará entre todas las posibles soluciones si alguno unifica con el que le pasamos como dato de entrada.
 
 % Cuando Fin no está instanciada, primero Fin unifica con el hecho de caminoAux, entonces Fin toma el valor de Inicio.
 % Cuando se le pide otra solución, ya no unifica con el hecho de CaminoAux y pasa a la siguiente regla.
