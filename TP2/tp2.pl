@@ -76,15 +76,16 @@ caminoAux(Inicio, Fin, T, [Vecino | Camino], Visitados) :- Inicio \= Fin, vecino
 %% 5.1. Analizar la reversibilidad de los parámetros Fin y Camino justificando adecuadamente en cada
 %% caso por qué el predicado se comporta como lo hace
 
-% La reversibilidad sobre Camino es posible sin ningún problema. Camino entra dentro del predicado caminoAux, donde Camino solo se usa
-% para llamar recursivamente a caminoAux, donde si no se instancia, se buscará un camino que cumpla con lo pedido. 
-% Ahora bien, en el caso contrario, Camino verificará entre todas las posibles soluciones si alguno unifica con el que le pasamos como dato de entrada.
+% Cuando Fin no está instanciada, primero Fin unifica con el hecho de caminoAux, entonces Fin toma el valor de Inicio. 
+% Cuando se le pide otra solución, ya no unifica con el hecho de caminoAux y pasa a la siguiente regla. 
+% Esta regla realiza una comparación entre Inicio y Fin. Si Fin está instanciada, Inicio /= Fin puede fallar o no, explorando el árbol de búsqueda si no lo hace.
+% Cuando no se instancia, sin embargo, la comparación siempre falla, haciendo que caminoAux nunca entre en su segundo caso. 
+% Esto causaría que Camino devuelva únicamente [Inicio].
 
-% Cuando Fin no está instanciada, primero Fin unifica con el hecho de caminoAux, entonces Fin toma el valor de Inicio.
-% Cuando se le pide otra solución, ya no unifica con el hecho de CaminoAux y pasa a la siguiente regla.
-% Está regla realiza una comparación entre Inicio y Fin. Si Fin está instanciada, Inicio \= Fin puede fallar o no, explorando el árbol de
-% búsqueda si no lo hace. Cuando no se instancia, sin embargo, la comparación siempre falla, haciendo que 
-% caminoAux nunca entre en su segundo caso. Esto causaría que Camino devuelva únicamente [Inicio].
+% La reversibilidad sobre Camino es posible sin ningún problema. Camino entra dentro del predicado caminoAux, donde Camino solo se usa para llamar 
+% recursivamente a caminoAux, donde si no se instancia, se buscará un camino que cumpla con lo pedido. 
+% Ahora bien, en el caso contrario, Camino verificará entre todas las posibles soluciones si alguna unifica con la que le pasamos como dato de entrada.
+% Si ninguna unifica devuelve false.
 
 %% Ejercicio 6
 %% camino2(+Inicio, +Fin, +Tablero, -Camino) idem camino/4 pero que las soluciones
@@ -96,36 +97,34 @@ camino2(Inicio, Fin, [T | Ts], Camino) :- length([T | Ts], Fila), length(T, Colu
 
 %% 6.1. Analizar la reversibilidad de los parámetros Inicio y Camino justificando adecuadamente en
 %% cada caso por qué el predicado se comporta como lo hace.
-%%reversibilidad sobre Inicio: camino2(-Inicio,+Fin,+Tablero,-Camino)
-%el predicado instancia a Inicio con el atomo instanciado en Fin, e instancia a Camino
-%como la lista [Inicio], lo que es correcto pero deberia devolver todos los posibles Caminos
-%con todos los Inicios váliddos. Luego length(Camino, Len) es verdadero
-%La única instanciación se de la siguiente forma (con Len =:= 1): desde camino2 se llama a camino 
-%(acá se instancia Camino como [Inicio | Camino']) y luego camino a caminoAux 
-%(donde se unifican en el caso base y se instancia Inicio y Camino', como Fin y 
-%[] respectivamente. 
-%La falla ocurre en el punto de que llama a caminoAux, ya que al pedir más respuestas
-%no elige el hecho sino la regla justo debajo y al intentar probar que Inicio \= Fin,
-%o sea que no unifiquen y falla ya que como Inicio no está instanciado Inicio y fin 
-%sí unifican. Luego cuando Len es mayor a 1, como el unico Camino que instancia camino es 
-%uno de longitud 1, siempre falla length(Camino, Len).
 
-%Reversibilidad de Camino: camino2(+Inicio,+Fin,+Tablero,+Camino)%
-%%el predicado es verdaero si Camino es valido, sino devuelve falso.
-%Esto cumple con lo que uno esperaría del predicado, por lo que es reversible.
-%La razón de esto es que camino2 va generando todos los caminos posibles y cuando Len se 
-%instancie con un valor igual a la longitud de Camino, al intentar demostrar camino con Camino instanciado
-%se verificará que Camino es un camino valido. Esto es por que camino es reversible, lo que a su vez se debe 
-%a que caminoAux es reversible, y esto último porque vecinoLibre es reversible. 
-%Sobre caminoAux lo que hace que sea reversible es que comprueba que cada elemento consecutivo de Camino 
-%sea un movimiento valido a través del tablero, lo que se logra gracias a que vecinoLibre es reversible en Vecino.
-%Este último es reversible en Vecino ya que el predicado vecino(+Pos, +Tablero, -PosVecino) es reversible en 
-%PosVecino ya que con pos(X1,Y1), que ahora está instanciado, se intenta demostrar lo siguiente:
-%X1 is X + N, Y1 is Y + M, lo cual tiene exito cuando pos(X1,Y1) es algún vecino de Pos, y para el caso que 
-%el camino sea valido sucede (ya que Pos y PosVecino son elementos consecutivos de Camino), para el caso que no
-%sea valido, falla en este punto o al ver si la casilla está ocupada o no (en el predicado ocupada.
-% Si Camino no es valido, como se dijo anteriormente, falla Inicio \= Fin, vecinoLibre(Inicio, T, Vecino) (donde
-% puede fallar en vecino o noOcupada o al demostrar not(member(Vecino, Visitados)) o en 
+% Reversibilidad sobre Inicio: camino2(-Inicio,+Fin,+Tablero,-Camino)
+% el predicado instancia a Inicio con el átomo instanciado en Fin, e instancia a Camino
+% como la lista [Inicio], lo que es correcto pero debería devolver todos los posibles Caminos
+% con todos los Inicios válidos. Luego length(Camino, Len) es verdadero.
+% La única instanciación se da de la siguiente forma (con Len =:= 1): desde camino2 se llama a camino 
+% (acá se instancia Camino como [Inicio | Camino']) y luego camino a caminoAux 
+% (donde se unifican en el caso base y se instancia Inicio y Camino', como Fin y [] respectivamente. 
+% La falla ocurre en el punto de que llama a caminoAux, ya que al pedir más respuestas
+% no elige el hecho sino la regla justo debajo y al intentar probar que Inicio \= Fin,
+% o sea que no unifiquen y falla ya que como Inicio no está instanciado, Inicio y Fin 
+% sí unifican. Luego cuando Len es mayor a 1, como el único Camino que instancia camino es 
+% uno de longitud 1, siempre falla length(Camino, Len).
+
+% Reversibilidad de Camino: camino2(+Inicio,+Fin,+Tablero,+Camino) el predicado es verdadero si Camino es válido, sino devuelve falso.
+% Esto cumple con lo que uno esperaría del predicado, por lo que es reversible.
+% La razón de esto es que camino2 va generando todos los caminos posibles y cuando Len se instancie con un valor igual 
+% a la longitud de Camino, al intentar demostrar camino con Camino instanciado se verificará que Camino es un camino válido. 
+% Esto es porque camino es reversible, lo que a su vez se debe a que caminoAux es reversible, y esto último porque vecinoLibre es reversible. 
+% Sobre caminoAux lo que hace que sea reversible es que comprueba que cada elemento consecutivo de Camino 
+% sea un movimiento válido a través del tablero, lo que se logra gracias a que vecinoLibre es reversible en Vecino.
+% Este último es reversible en Vecino ya que el predicado vecino(+Pos, +Tablero, -PosVecino) es reversible en 
+% PosVecino ya que con pos(X1,Y1), que ahora está instanciado, se intenta demostrar lo siguiente:
+% X1 is X + N, Y1 is Y + M, lo cual tiene éxito cuando pos(X1,Y1) es algún vecino de Pos, y para el caso que 
+% el camino sea válido sucede (ya que Pos y PosVecino son elementos consecutivos de Camino), para el caso que no
+% sea válido, falla en este punto o al ver si la casilla está ocupada o no (en el predicado ocupada).
+% Si Camino no es válido, como se dijo anteriormente, falla Inicio \= Fin, vecinoLibre(Inicio, T, Vecino) (donde
+% puede fallar en vecino o noOcupada o al demostrar not(member(Vecino, Visitados)).
 
 %% Ejercicio 7
 %% caminoOptimo(+Inicio, +Fin, +Tablero, -Camino) será verdadero cuando Camino sea un
